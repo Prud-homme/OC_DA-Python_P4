@@ -31,6 +31,10 @@ class Player:
 		""""""
 		players_table.insert(self.serializing())
 
+	def update_db(self, players_table, player_id):
+		""""""
+		players_table.update(self.serializing(), doc_ids=[player_id])
+
 	def load_from_database(self, player_id, players_table):
 		player_data = players_table.all()[player_id-1]
 		self.unserializing(player_data)

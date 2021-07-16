@@ -1,6 +1,6 @@
 import re
-from models import Tournament, Player, Turn, Match
-from settings import players_table, tournaments_table, Info, display_players, display_tournaments
+from .models import Tournament, Player, Turn, Match
+from .settings import players_table, tournaments_table, Info#, display_players, display_tournaments
 #from tinydb import TinyDB, Query
 #db = TinyDB('db.json')
 #PlayerInfo = Query() # doc TinyDB -> Fruit = Query()
@@ -67,15 +67,16 @@ class Controller:
 					) = self.view.prompt_tournament_info()
 				tournament = Tournament(name, location, date, description, time_control, turns_number)
 				tournament.add_to_db(tournaments_table)
-				display_tournaments()
+				#display_tournaments()
+				print(tournament)
 
 			elif choice == '2':#load tournament
 				research = self.view.prompt_research()
 				tournament = Tournament()
 				results = tournament.search_in_db(research, tournaments_table, Info)
 				selection = self.view.prompt_research_result(results, 'tournament')
-				print(selection)
-				print(results[int(selection)])
+				#print(selection)
+				#print(results[int(selection)])
 				tournament_id = tournament.get_id(results[int(selection)], tournaments_table, Info)
 				tournament.load_from_database(tournament_id, tournaments_table)
 				print(tournament)
@@ -89,7 +90,8 @@ class Controller:
 					)  = self.view.prompt_player_info()
 				player = Player(name, birth_date, gender, ranking)
 				player.add_to_db(players_table)
-				display_players()
+				print(player)
+				#display_players()
 
 			elif choice == '4':#load player
 				research = self.view.prompt_research()
@@ -98,6 +100,7 @@ class Controller:
 				selection = self.view.prompt_research_result(results, 'player')
 				player_id = player.get_id(results[int(selection)], players_table, Info)
 				player.load_from_database(player_id, players_table)
+				print('ID: ', player_id)
 				print(player)
 
 			elif choice == '5':
@@ -105,10 +108,46 @@ class Controller:
 				turn = Turn(name)
 				print(turn)
 
-			elif choice == '6':
-				display_players()
 			elif choice == '7':
-				display_tournaments()
+				(selection, update) = self.view.prompt_edit_player(player)
+				if selection=="0":
+					player.name = update
+				elif selection=="1":
+					player.birth_date = update
+				elif selection=="2":
+					player.gender = update
+				elif selection=="3":
+					player.ranking = update
+				player.update_db(players_table, player_id)
+
+			elif choice == '8':
+				(selection, update) = self.view.prompt_edit_tournament(tournament)
+				if selection=="0":
+					tournament.name = update
+				elif selection=="1":
+					tournament.location = update
+				elif selection=="2":
+					tournament.date = update
+				elif selection=="3":
+					tournament.description = update
+				elif selection=="4":
+					tournament.time_control = update
+				elif selection=="5":
+					tournament.turns_number = update
+				tournament.update_db(tournaments_table, tournament_id)
+
+			elif choice == '10':
+				try:
+					print('ID: ', player_id)
+					print(player)
+				except:
+					print("Aucun joueur")
+
+			elif choice == '11':
+				try:
+					print(tournament)
+				except:
+					print("Aucun tournoi")
 			# # Créer tournoi puis directement ajout joueur ?
 			# # Option pour ajouter un joueur a la bdd sans l'ajouter au tournoi
 			# elif choice == 2:#Selectionner les joueurs du tournois

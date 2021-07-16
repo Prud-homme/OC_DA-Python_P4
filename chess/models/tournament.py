@@ -20,7 +20,7 @@ class Tournament:
 			f"Date: {self.date}\n"
 			f"Controle: {self.time_control}\n"
 			f"Tours: {self.turns_number}\n"
-			f"Description: {self.description}.\n"
+			f"Description: {self.description}\n"
 			f"Joueurs: {self.players}"
 			)
 		return info
@@ -60,6 +60,10 @@ class Tournament:
 	def add_to_db(self, tournaments_table):
 		""""""
 		tournaments_table.insert(self.serializing())
+
+	def update_db(self, tournaments_table, tournament_id):
+		""""""
+		tournaments_table.update(self.serializing(), doc_ids=[tournament_id])
 
 	def load_from_database(self, tournament_id, tournaments_table):
 		tournament_data = tournaments_table.all()[tournament_id-1]
