@@ -1,6 +1,6 @@
 import re
 class Player:
-	def __init__(self, name="", birth_date="", gender="", ranking=""):
+	def __init__(self, name="", birth_date="", gender="", ranking=None):
 		""""""
 		self.name = name
 		self.birth_date = birth_date
@@ -11,6 +11,9 @@ class Player:
 		return ("Informations du joueur: "
 				f"{self.name}, {self.birth_date}, {self.gender}, {self.ranking}.")
 
+	def well_defined(self):
+		return self.name!="" and self.birth_date!="" and self.gender!="" and self.ranking!=None
+
 	def serializing(self):
 		""""""
 		return {
@@ -20,41 +23,47 @@ class Player:
 				'ranking': self.ranking
 				}
 
-	def unserializing(self, player_data):#{'name':...}
+	def unserializing(self, player_data):
 		""""""
 		self.name = player_data['name']
 		self.birth_date = player_data['birth_date']
 		self.gender = player_data['gender']
 		self.ranking = player_data['ranking']
 
-	def add_to_db(self, players_table):
+	def insert(self):
 		""""""
-		players_table.insert(self.serializing())
+		if self.well_defined():
+			create_item(players_table, self.serializing())
+		else:
+			raise m_exc.PlayerBadDefined(
+				"Unable to add the player to the database, please define his information.")
 
-	def update_db(self, players_table, player_id):
+	def read(self, player_id):
 		""""""
-		players_table.update(self.serializing(), doc_ids=[player_id])
-
-	def load_from_database(self, player_id, players_table):
-		player_data = players_table.all()[player_id-1]
+		player_data = read_item_with_id(players_table, player_id)
 		self.unserializing(player_data)
 
+	def update(self, player_id):
+		""""""
+		update_item(players_table, self.serializing(), player_id)
+
+	def delete(self, player_id):
+		delete_item(players_table, player_id)
 
 	@staticmethod
-	def search_in_db(research, players_table, Info):
+	def table_id(player_data):
+		""""""
+		return get_id(players_table, player_data)
+
+	@staticmethod
+	def research(research):
 		""""""
 		return players_table.search(
-			Info.name.search(research, flags=re.IGNORECASE) \
+			Query().name.search(research, flags=re.IGNORECASE) \
 			| \
-			Info.birth_date.search(research, flags=re.IGNORECASE) \
+			Query().birth_date.search(research, flags=re.IGNORECASE) \
 			| \
-			Info.gender.search(research, flags=re.IGNORECASE) \
+			Query().gender.search(research, flags=re.IGNORECASE) \
 			| \
-			Info.ranking.search(research, flags=re.IGNORECASE)
+			Query().ranking.search(research, flags=re.IGNORECASE)
 			)
-
-	@staticmethod
-	def get_id(player_data, players_table, Info):
-		""""""
-		player = players_table.get(Info.fragment(player_data))
-		return player.doc_id
