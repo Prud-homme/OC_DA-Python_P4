@@ -6,11 +6,15 @@ def display_menu():
 	3: Report and statistics
 	0: Exit
 	> Select an option: '''
-	return input(menu)
+	choice = input(menu)
+	#4: Remove a registered player -> archiver
+	if choice.isdecimal() and int(choice)<=3:
+		return int(choice)
+	else:
+		print('Incorrect entry, please try again.')
+		return display_menu()
 
-def display_try_again():
-	print('''Incorrect entry, please try again.
-		''')
+
 # def display_menu():
 # 	menu = (
 # 		"\n--- Menu ---\n"

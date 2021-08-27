@@ -1,6 +1,13 @@
 import re
+from chess.settings import TIME_CONTROL
+# a implementer
+# View informations
+# View players
+# View matchs
+# View turns
 
-
+# serial for search id
+# serial for update in table
 class Tournament:
 
 	def __init__(self, name=None, location=None, date=None, description=None, time_control=None, turns_number=4, players_number=8):
@@ -15,18 +22,21 @@ class Tournament:
 		self.turns = []
 
 	def __str__(self):
-		info = (
-			"Caractéristiques du tournoi:\n"
-			f"Nom: {self.name}\n"
-			f"Lieu: {self.location}\n"
-			f"Date: {self.date}\n"
-			f"Controle: {self.time_control}\n"
-			f"Tours: {self.turns_number}\n"
-			f"Description: {self.description}\n"
-			f"Joueurs: {self.players}\n"
-			f"Tours: {self.turns}"
-			)
+		info = f'''
+		Caractéristiques du tournoi:
+		Nom: {self.name}
+		Lieu: {self.location}
+		Date: {self.date}
+		Controle: {self.time_control}
+		Tours: {self.turns_number}
+		Description: {self.description}
+		Joueurs: {self.players}
+		Tours: {self.turns}
+		'''
 		return info
+
+	def well_defined(self):
+		return None not in (self.location, self.date, self.description, self.time_control) and len(self.players)==self.players_number
 
 	def add_turn(self, turn):
 		""""""
@@ -36,8 +46,17 @@ class Tournament:
 		""""""
 		self.players.append(player_id)
 
-	def well_defined(self):
-		return self.name!="" and self.location!="" and self.date!="" and self.time_control!=None
+	def partial_serializing(self):
+		""""""
+		return {
+				'name': self.name,
+				'location': self.location,
+				'date': self.date,
+				'description': self.description,
+				'time_control': self.time_control,
+				'turns_number': self.turns_number,
+				'players_number': self.players_number
+				}
 
 	def serializing(self):
 		""""""

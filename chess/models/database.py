@@ -1,4 +1,5 @@
 from tinydb import TinyDB, Query
+import re
 
 class Table:
 	"""
@@ -40,3 +41,17 @@ class Table:
 	def get_item_with_id(self, item_id: int) -> dict:
 		"""Get the serialized data of an element of the table thanks to its id"""
 		return self.table.all()[item_id-1]
+
+	def search_by_name(self, search_name):
+		"""Search by name (if the field exist) in the table"""
+		if self.table.search(Query().name.exists()):
+			return self.table.search(Query().name.search(search_name, flags=re.IGNORECASE))
+		else:
+			return []
+
+	def search_by_location(self, search_location):
+		"""Search by location (if the field exist) in the table"""
+		if self.table.search(Query().location.exists()):
+			return self.table.search(Query().location.search(search_location, flags=re.IGNORECASE))
+		else:
+			return []

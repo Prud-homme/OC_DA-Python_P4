@@ -3,18 +3,20 @@ from chess import *
 def run():
 	choice = -1
 	tournament = None
-	while choice!='0':
+	tournament_id = -1
+	while choice!=0:
 		choice = mm_v.display_menu()
-		if choice=='0':
+		if choice==0:
 			print('Quit...')
-		elif choice=='1':
+		elif choice==1:
 			print('[IN PROGRESS] Tournaments')
-			tournament = t_c.run(tournament)
+			tournament, tournament_id = t_c.run(tournament, tournament_id)
 
-		elif choice=='2':
+		elif choice==2:
 			print('[IN PROGRESS] Players')
+			#p_c.run()
 
-		elif choice=='3':
+		elif choice==3:
 			print('[IN PROGRESS] Reports')
 
 		else:

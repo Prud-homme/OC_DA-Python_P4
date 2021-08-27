@@ -1,32 +1,42 @@
 import re
 class Player:
-	def __init__(self, name="", birth_date="", gender="", ranking=None):
+	def __init__(self, firstname=None, lastname=None, birthdate=None, gender=None, ranking=None):
 		""""""
-		self.name = name
-		self.birth_date = birth_date
+		self.firstname = firstname
+		self.lastname = lastname
+		self.birthdate = birthdate
 		self.gender = gender
 		self.ranking = ranking
+		if None in (firstname, lastname):
+			self.name = None
+		else:
+			self.name = ' '.join((lastname, firstname))
 
 	def __str__(self):
 		return ("Informations du joueur: "
-				f"{self.name}, {self.birth_date}, {self.gender}, {self.ranking}.")
+				f"{self.name}, {self.birthdate}, {self.gender}, {self.ranking}.")
 
 	def well_defined(self):
-		return self.name!="" and self.birth_date!="" and self.gender!="" and self.ranking!=None
+		return None not in (self.birthdate, self.gender, self.ranking)
+
 
 	def serializing(self):
 		""""""
 		return {
+				'firstname': self.firstname,
+				'lastname': self.lastname,
 				'name': self.name,
-				'birth_date': self.birth_date,
+				'birthdate': self.birthdate,
 				'gender': self.gender,
 				'ranking': self.ranking
 				}
 
 	def unserializing(self, player_data):
 		""""""
+		self.firstname = player_data['firstname']
+		self.lastname = player_data['lastname']
 		self.name = player_data['name']
-		self.birth_date = player_data['birth_date']
+		self.birthdate = player_data['birthdate']
 		self.gender = player_data['gender']
 		self.ranking = player_data['ranking']
 
@@ -61,7 +71,7 @@ class Player:
 		return players_table.search(
 			Query().name.search(research, flags=re.IGNORECASE) \
 			| \
-			Query().birth_date.search(research, flags=re.IGNORECASE) \
+			Query().birthdate.search(research, flags=re.IGNORECASE) \
 			| \
 			Query().gender.search(research, flags=re.IGNORECASE) \
 			| \

@@ -1,1 +1,1 @@
-import chess.controllers.tournaments as tournaments
+import chess.controllers.tournaments as tournaments#, players
