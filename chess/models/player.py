@@ -1,79 +1,91 @@
 import re
+
+from chess.settings import PLAYERS_TABLE
+
+
 class Player:
-	def __init__(self, firstname=None, lastname=None, birthdate=None, gender=None, ranking=None):
-		""""""
-		self.firstname = firstname
-		self.lastname = lastname
-		self.birthdate = birthdate
-		self.gender = gender
-		self.ranking = ranking
-		if None in (firstname, lastname):
-			self.name = None
-		else:
-			self.name = ' '.join((lastname, firstname))
+    def __init__(
+            self,
+            firstname=None,
+            lastname=None,
+            birthdate=None,
+            gender=None,
+            ranking=None):
+        """"""
+        self.firstname = firstname
+        self.lastname = lastname
+        self.birthdate = birthdate
+        self.gender = gender
+        self.ranking = ranking
 
-	def __str__(self):
-		return ("Informations du joueur: "
-				f"{self.name}, {self.birthdate}, {self.gender}, {self.ranking}.")
+    def well_defined(self):
+        return None not in (
+            self.firstname,
+            self.lastname,
+            self.birthdate,
+            self.gender,
+            self.ranking)
 
-	def well_defined(self):
-		return None not in (self.birthdate, self.gender, self.ranking)
+    def serializing(self):
+        """"""
+        return {
+            'firstname': self.firstname,
+            'lastname': self.lastname,
+            'birthdate': self.birthdate,
+            'gender': self.gender,
+            'ranking': self.ranking
+        }
 
+    def unserializing(self, player_data):
+        """"""
+        self.firstname = player_data['firstname']
+        self.lastname = player_data['lastname']
+        self.birthdate = player_data['birthdate']
+        self.gender = player_data['gender']
+        self.ranking = player_data['ranking']
 
-	def serializing(self):
-		""""""
-		return {
-				'firstname': self.firstname,
-				'lastname': self.lastname,
-				'name': self.name,
-				'birthdate': self.birthdate,
-				'gender': self.gender,
-				'ranking': self.ranking
-				}
+    def exist_in_database(self):
+        if self.well_defined():
+            return PLAYERS_TABLE.exist_serial_data(self.serializing())
+        return False
 
-	def unserializing(self, player_data):
-		""""""
-		self.firstname = player_data['firstname']
-		self.lastname = player_data['lastname']
-		self.name = player_data['name']
-		self.birthdate = player_data['birthdate']
-		self.gender = player_data['gender']
-		self.ranking = player_data['ranking']
+    def get_id_in_database(self):
+        if self.well_defined():
+            return PLAYERS_TABLE.get_id(self.serializing())
+        return -1
 
-	def insert(self):
-		""""""
-		if self.well_defined():
-			create_item(players_table, self.serializing())
-		else:
-			raise m_exc.PlayerBadDefined(
-				"Unable to add the player to the database, please define his information.")
+    def get_player_name_with_id(self, player_id):
+        if PLAYERS_TABLE.exist_id(player_id):
+            self.unserializing(PLAYERS_TABLE.get_item_with_id(player_id))
+            return ' '.join((self.firstname, self.lastname))
+        else:
+            return ''
 
-	def read(self, player_id):
-		""""""
-		player_data = read_item_with_id(players_table, player_id)
-		self.unserializing(player_data)
+    def insert_in_database(self):
+        if self.well_defined():
+            PLAYERS_TABLE.create_item(self.serializing())
+            return 'Success'
+        else:
+            return 'Fail: player is not well defined'
 
-	def update(self, player_id):
-		""""""
-		update_item(players_table, self.serializing(), player_id)
+    def load_from_database_with_id(self, player_id):
+        if PLAYERS_TABLE.exist_id(player_id):
+            self.unserializing(PLAYERS_TABLE.get_item_with_id(player_id))
+            return 'Success'
+        else:
+            return 'Fail: no player exists with this id in the database'
 
-	def delete(self, player_id):
-		delete_item(players_table, player_id)
+    def load_from_database_with_serial_data(self, serial_data):
+        if PLAYERS_TABLE.exist_serial_data(serial_data):
+            self.unserializing(serial_data)
+            return 'Success'
+        else:
+            return 'Fail: no player exists with this data in the database'
 
-	@staticmethod
-	def table_id(player_data):
-		""""""
-		return get_id(players_table, player_data)
-
-	@staticmethod
-	def research(research):
-		""""""
-		return players_table.search(
-			Query().name.search(research, flags=re.IGNORECASE) \
-			| \
-			Query().birthdate.search(research, flags=re.IGNORECASE) \
-			| \
-			Query().gender.search(research, flags=re.IGNORECASE) \
-			| \
-			Query().ranking.search(research, flags=re.IGNORECASE)
-			)
+    def update_in_database(self):
+        player_id = self.get_id_in_database()
+        if player_id != -1:
+            PLAYERS_TABLE.update_item(self.serializing(), player_id)
+            return 'Success'
+        else:
+            return 'Fail: no player exists with this data in the database'

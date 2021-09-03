@@ -1,160 +1,153 @@
 import re
-from chess.settings import TIME_CONTROL
-# a implementer
-# View informations
-# View players
-# View matchs
-# View turns
+from textwrap import dedent
 
-# serial for search id
-# serial for update in table
+from chess.models import Turn
+from chess.settings import PLAYERS_TABLE, TIME_CONTROL, TOURNAMENTS_TABLE
+
+
 class Tournament:
 
-	def __init__(self, name=None, location=None, date=None, description=None, time_control=None, turns_number=4, players_number=8):
-		self.name = name
-		self.location = location
-		self.date = date
-		self.description = description
-		self.time_control = time_control
-		self.turns_number = turns_number
-		self.players_number = players_number
-		self.players = []
-		self.turns = []
+    def __init__(
+            self,
+            name=None,
+            location=None,
+            date=None,
+            description=None,
+            time_control=None,
+            turns_number=4,
+            players_number=8):
+        self.name = name
+        self.location = location
+        self.date = date
+        self.description = description
+        self.time_control = time_control
+        self.turns_number = turns_number
+        self.players_number = players_number
+        self.players = []
+        self.turns = []
 
-	def __str__(self):
-		info = f'''
-		Caractéristiques du tournoi:
-		Nom: {self.name}
-		Lieu: {self.location}
+    def __str__(self):
+        info = f'''Tournament informations:
+		Name: {self.name}
+		Location: {self.location}
 		Date: {self.date}
-		Controle: {self.time_control}
-		Tours: {self.turns_number}
 		Description: {self.description}
-		Joueurs: {self.players}
-		Tours: {self.turns}
-		'''
-		return info
+		Time control: {self.time_control}
+		Turns number: {self.turns_number}
+		Players number: {self.players_number}
+		Players defined: {self.players}'''
+        return dedent(info)
 
-	def well_defined(self):
-		return None not in (self.location, self.date, self.description, self.time_control) and len(self.players)==self.players_number
+    def add_turn(self, turn):
+        """"""
+        self.turns.append(turn)
 
-	def add_turn(self, turn):
-		""""""
-		self.turns.append(turn)
+    def add_player(self, player_id):
+        """"""
+        self.players.append(player_id)
 
-	def add_player(self, player_id):
-		""""""
-		self.players.append(player_id)
+    def partial_serializing(self):
+        """"""
+        return {
+            'name': self.name,
+            'location': self.location,
+            'date': self.date,
+            'description': self.description,
+            'time_control': self.time_control,
+            'turns_number': self.turns_number,
+            'players_number': self.players_number
+        }
 
-	def partial_serializing(self):
-		""""""
-		return {
-				'name': self.name,
-				'location': self.location,
-				'date': self.date,
-				'description': self.description,
-				'time_control': self.time_control,
-				'turns_number': self.turns_number,
-				'players_number': self.players_number
-				}
+    def partial_well_defined(self):
+        return None not in (
+            self.name,
+            self.location,
+            self.date,
+            self.description,
+            self.time_control)
 
-	def serializing(self):
-		""""""
-		return {
-				'name': self.name,
-				'location': self.location,
-				'date': self.date,
-				'description': self.description,
-				'time_control': self.time_control,
-				'turns_number': self.turns_number,
-				'players_number': self.players_number,
-				'players': self.players,
-				'turns': self.turns,
-				}
+    def serializing(self):
+        """"""
+        turns = []
+        for turn in self.turns:
+            turns.append(turn.serializing)
+        return {
+            'name': self.name,
+            'location': self.location,
+            'date': self.date,
+            'description': self.description,
+            'time_control': self.time_control,
+            'turns_number': self.turns_number,
+            'players_number': self.players_number,
+            'players': self.players,
+            'turns': turns
+        }
 
-	def unserializing(self, tournament_data):
-		""""""
-		self.name = tournament_data['name']
-		self.location = tournament_data['location']
-		self.date = tournament_data['date']
-		self.description = tournament_data['description']
-		self.time_control = tournament_data['time_control']
-		self.turns_number = tournament_data['turns_number']
-		self.players_number = tournament_data['players_number']
-		self.players = tournament_data['players']
-		self.turns = tournament_data['turns']
+    def unserializing(self, tournament_data):
+        """"""
+        turns = []
+        for serial_turn in tournament_data['turns']:
+            turn = Turn()
+            turn.unserializing(serial_turn)
+            turns.append(turn)
 
-	def insert(self):
-		""""""
-		if self.well_defined():
-			create_item(tournaments_table, self.serializing())
-		else:
-			print("Unable to add the player to the database, please define his information.")
+        self.name = tournament_data['name']
+        self.location = tournament_data['location']
+        self.date = tournament_data['date']
+        self.description = tournament_data['description']
+        self.time_control = tournament_data['time_control']
+        self.turns_number = tournament_data['turns_number']
+        self.players_number = tournament_data['players_number']
+        self.players = tournament_data['players']
+        self.turns = turns
 
-	def read(self, tournament_id):
-		""""""
-		tournament_data = read_item_with_id(tournaments_table, tournament_id)
-		self.unserializing(tournament_data)
+    def load_scores(self):
+        scores = [0] * len(self.players)
+        for turn in self.turns:
+            for match in turn.matchs:
+                ([player1, score1], [player2, score2]) = match.match
+                index1 = self.players.index(player1)
+                index2 = self.players.index(player2)
+                scores[index1] += float(score1)
+                scores[index2] += float(score2)
+        return scores
 
-	def update(self, tournament_id):
-		""""""
-		update_item(tournaments_table, self.serializing(), tournament_id)
+    def load_ranking(self):
+        ranking = []
+        for player_id in self.players:
+            player_data = PLAYERS_TABLE.get_item_with_id(player_id)
+            ranking.append(int(player_data['ranking']))
+        return ranking
 
-	def delete(self, tournament_id):
-		delete_item(tournaments_table, tournament_id)
+    def exist_in_database(self):
+        if self.partial_well_defined():
+            return TOURNAMENTS_TABLE.exist_serial_data(
+                self.partial_serializing())
+        return False
 
-	@staticmethod
-	def table_id(tournament_data):
-		""""""
-		return get_id(tournaments_table, tournament_data)
+    def get_id_in_database(self):
+        if self.partial_well_defined():
+            return TOURNAMENTS_TABLE.get_id(self.partial_serializing())
+        return -1
 
-	# def add_to_db(self, tournaments_table):
-	# 	""""""
-	# 	tournaments_table.insert(self.serializing())
+    def insert_in_database(self):
+        if self.partial_well_defined():
+            TOURNAMENTS_TABLE.create_item(self.serializing())
+            return 'Success'
+        else:
+            return 'Fail: tournament is not well defined'
 
-	# def update_db(self, tournaments_table, tournament_id):
-	# 	""""""
-	# 	tournaments_table.update(self.serializing(), doc_ids=[tournament_id])
+    def load_from_database_with_serial_data(self, serial_data):
+        if TOURNAMENTS_TABLE.exist_serial_data(serial_data):
+            self.unserializing(serial_data)
+            return 'Success'
+        else:
+            return 'Fail: no tournament exists with this data in the database'
 
-	# def load_from_database(self, tournament_id, tournaments_table):
-	# 	tournament_data = tournaments_table.all()[tournament_id-1]
-	# 	self.unserializing(tournament_data)
-
-	def load_scores(self):
-		scores = [0]*len(self.players)
-		for turn in self.turns:
-			for match in turn.matchs:
-				([player1, score1], [player2, score2]) = match.match
-				index1 = self.players.index(player1)
-				index2 = self.players.index(player2)
-				scores[index1] += float(score1)
-				scores[index2] += float(score2)
-		return scores
-
-	def load_ranking(self):
-		ranking = []
-		for tournament_id in self.players:
-			tournament_data = tournaments_table.all()[tournament_id]
-			ranking.append(int(tournament_data['ranking']))
-		return ranking
-
-	@staticmethod
-	def search_in_db(research, tournaments_table):
-		""""""
-		return tournaments_table.search(
-			Query().name.search(research, flags=re.IGNORECASE) \
-			| \
-			Query().location.search(research, flags=re.IGNORECASE) \
-			| \
-			Query().date.search(research, flags=re.IGNORECASE) \
-			| \
-			Query().time_control.search(research, flags=re.IGNORECASE) \
-			| \
-			Query().description.search(research, flags=re.IGNORECASE) 
-			)
-
-	# @staticmethod
-	# def get_id(tournament_data, tournaments_table):
-	# 	""""""
-	# 	tournament = tournaments_table.get(Query().fragment(tournament_data))
-	# 	return tournament.doc_id
+    def update_in_database(self):
+        tournament_id = self.get_id_in_database()
+        if tournament_id != -1:
+            TOURNAMENTS_TABLE.update_item(self.serializing(), tournament_id)
+            return 'Success'
+        else:
+            return 'Fail: no tournament exists with this data in the database'

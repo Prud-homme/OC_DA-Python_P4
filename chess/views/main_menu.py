@@ -1,18 +1,18 @@
 def display_menu():
-	menu = '''
+    menu = '''
 	--- Main menu ---
 	1: Tournaments menu
 	2: Players menu
 	3: Report and statistics
 	0: Exit
 	> Select an option: '''
-	choice = input(menu)
-	#4: Remove a registered player -> archiver
-	if choice.isdecimal() and int(choice)<=3:
-		return int(choice)
-	else:
-		print('Incorrect entry, please try again.')
-		return display_menu()
+    choice = input(menu)
+    # 4: Remove a registered player -> archiver
+    if choice.isdecimal() and int(choice) <= 3:
+        return int(choice)
+    else:
+        print('Incorrect entry, please try again.')
+        return display_menu()
 
 
 # def display_menu():
@@ -201,7 +201,7 @@ def display_menu():
 # 			state = False
 # 		else:
 # 			print('Incorrect entry, please try again.\n')
-	
+
 # 	if selection=="0":
 # 		update = input('Name: ')
 # 	elif selection=="1":
@@ -233,7 +233,7 @@ def display_menu():
 # 			state = False
 # 		else:
 # 			print('Incorrect entry, please try again.\n')
-	
+
 # 	if selection=="0":
 # 		update = input('Name: ')
 # 	elif selection=="1":
@@ -276,4 +276,3 @@ def display_menu():
 # 	for i in range(nb_players):
 # 		players.append(int(input('Player ID: ')))
 # 	return players
-

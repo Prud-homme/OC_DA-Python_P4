@@ -1,5 +1,5 @@
 def display_menu():
-	menu = f'''
+    menu = f'''
 	--- Report and statistics ---
 	1: List of all players
 	2: List of all tournaments
@@ -8,16 +8,18 @@ def display_menu():
 	5: List of all matchs in a tournament
 	0: Main menu
 	> Select an option: '''
-	return input(menu)
+    return input(menu)
+
 
 def display_menu_filter():
-	menu = '''>>> Filter by <<<
+    menu = '''>>> Filter by <<<
 	1: Rank
 	2: Alphabetical order
 	0: Show report
 	'''
 
+
 def display_menu_search_tournament():
-	menu = ''' >>> Search a tournament <<<
+    menu = ''' >>> Search a tournament <<<
 	> Research: '''
-	return input(menu)
+    return input(menu)
