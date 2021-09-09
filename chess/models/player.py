@@ -1,91 +1,96 @@
 import re
-
+from typing import Optional 
 from chess.settings import PLAYERS_TABLE
 
 
 class Player:
-    def __init__(
-            self,
-            firstname=None,
-            lastname=None,
-            birthdate=None,
-            gender=None,
-            ranking=None):
-        """"""
-        self.firstname = firstname
-        self.lastname = lastname
-        self.birthdate = birthdate
-        self.gender = gender
-        self.ranking = ranking
+    def __init__(self, **kwargs) -> None:
+        ''''''
+        self.firstname = kwargs.get('firstname', None)
+        self.lastname = kwargs.get('lastname', None)
+        self.birthdate = kwargs.get('birthdate', None)
+        self.gender = kwargs.get('gender', None)
+        self.ranking = kwargs.get('ranking', None)
 
-    def well_defined(self):
-        return None not in (
-            self.firstname,
-            self.lastname,
-            self.birthdate,
-            self.gender,
-            self.ranking)
+    def __str__(self) -> None:
+        gender_equivalent = {'M':'man', 'F':'woman'}
+        return f'''The player's name is {self.firstname} {self.lastname}, 
+is a {gender_equivalent[self.gender]} born on {self.birthdate}. 
+His ranking is {self.ranking}.'''.replace('\n', ' ')
 
-    def serializing(self):
-        """"""
+    def __repr__(self) -> None:
+        return f'''Player(firstname='{self.firstname}', lastname='{self.lastname}',
+birthdate='{self.birthdate}', gender='{self.gender}',
+ranking='{self.ranking}')'''.replace('\n', ' ')
+
+    def serializing(self) -> dict:
+        ''''''
         return {
             'firstname': self.firstname,
             'lastname': self.lastname,
             'birthdate': self.birthdate,
             'gender': self.gender,
-            'ranking': self.ranking
+            'ranking': self.ranking,
         }
 
-    def unserializing(self, player_data):
-        """"""
-        self.firstname = player_data['firstname']
-        self.lastname = player_data['lastname']
-        self.birthdate = player_data['birthdate']
-        self.gender = player_data['gender']
-        self.ranking = player_data['ranking']
+    def unserializing(self, serial_player: dict) -> None:
+        ''''''
+        self.firstname = serial_player['firstname']
+        self.lastname = serial_player['lastname']
+        self.birthdate = serial_player['birthdate']
+        self.gender = serial_player['gender']
+        self.ranking = serial_player['ranking']
 
-    def exist_in_database(self):
-        if self.well_defined():
-            return PLAYERS_TABLE.exist_serial_data(self.serializing())
+    def attributes_are_not_none(self) -> bool:
+        return None not in (
+            self.firstname,
+            self.lastname,
+            self.birthdate,
+            self.gender,
+            self.ranking,
+        )
+
+    def exist_in_database(self, players_table) -> bool:
+        if self.attributes_are_not_none():
+            return players_table.exist_serial_data(self.serializing())
         return False
 
-    def get_id_in_database(self):
-        if self.well_defined():
-            return PLAYERS_TABLE.get_id(self.serializing())
-        return -1
+    def get_id_in_database(self, players_table) -> Optional[int]:
+        if self.attributes_are_not_none():
+            return players_table.get_id(self.serializing())
+        return None
 
-    def get_player_name_with_id(self, player_id):
-        if PLAYERS_TABLE.exist_id(player_id):
-            self.unserializing(PLAYERS_TABLE.get_item_with_id(player_id))
-            return ' '.join((self.firstname, self.lastname))
+    def insert_in_database(self, players_table):
+        if not self.exist_in_database():
+            players_table.create_item(self.serializing())
+            print('Successful insert.')
         else:
-            return ''
+            print('Insertion impossible, the player already exists in the database.')
 
-    def insert_in_database(self):
-        if self.well_defined():
-            PLAYERS_TABLE.create_item(self.serializing())
-            return 'Success'
+    def load_from_database_with_id(self, players_table, player_id):
+        if players_table.exist_id(player_id):
+            self.unserializing(players_table.get_item_with_id(player_id))
+            print('Successful load.')
         else:
-            return 'Fail: player is not well defined'
+            print('Load impossible, player does not exist in the database.')
 
-    def load_from_database_with_id(self, player_id):
-        if PLAYERS_TABLE.exist_id(player_id):
-            self.unserializing(PLAYERS_TABLE.get_item_with_id(player_id))
-            return 'Success'
+    def load_from_database_with_serial_data(self, players_table, serial_player):
+        if players_table.exist_serial_data(serial_player):
+            self.unserializing(serial_player)
+            print('Successful load.')
         else:
-            return 'Fail: no player exists with this id in the database'
+            print('Load impossible, player does not exist in the database.')
 
-    def load_from_database_with_serial_data(self, serial_data):
-        if PLAYERS_TABLE.exist_serial_data(serial_data):
-            self.unserializing(serial_data)
-            return 'Success'
-        else:
-            return 'Fail: no player exists with this data in the database'
-
-    def update_in_database(self):
+    def update_in_database(self, players_table):
         player_id = self.get_id_in_database()
-        if player_id != -1:
-            PLAYERS_TABLE.update_item(self.serializing(), player_id)
-            return 'Success'
+        if player_id != None:
+            players_table.update_item(self.serializing(), player_id)
+            print('Successful update.')
         else:
-            return 'Fail: no player exists with this data in the database'
+            print('Update impossible, player does not exist in the database.')
+
+    def display(self):
+        if self.attributes_are_not_none():
+            print(f'\n{self.__str__()}\n')
+        else:
+            print('The player is not correctly defined, try again after completing his information')
