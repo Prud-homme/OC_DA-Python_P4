@@ -69,7 +69,7 @@ players_number={self.players_number})'''.replace('\n', ' ')
             if len(self.players) == self.players_number:
                 print('The list of players for this tournament is complete.')
 
-    def serializing(self, serial_turns: dict) -> None:
+    def serializing(self, match_object, turn_object) -> None:
         ''''''
         return {
             'name': self.name,
@@ -80,10 +80,10 @@ players_number={self.players_number})'''.replace('\n', ' ')
             'turns_number': self.turns_number,
             'players_number': self.players_number,
             'players': self.players,
-            'turns': serial_turns,
+            'turns': turn_object.serializing_turns(match_object,self.turns),
         }
 
-    def unserializing(self, serial_tournament: dict, unserial_turns: list) -> None:
+    def unserializing(self, match_object, turn_object, serial_tournament: dict) -> None:
         ''''''
         self.name = serial_tournament['name']
         self.location = serial_tournament['location']
@@ -93,7 +93,7 @@ players_number={self.players_number})'''.replace('\n', ' ')
         self.turns_number = serial_tournament['turns_number']
         self.players_number = serial_tournament['players_number']
         self.players = serial_tournament['players']
-        self.turns = unserial_turns
+        self.turns = turn_object.unserializing_turns(match_object, serial_tournament['turns'])
 
     def load_scores(self) -> list:
         scores = [0] * len(self.players)
