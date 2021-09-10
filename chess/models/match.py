@@ -17,10 +17,6 @@ class Match:
         return f'''Match(player1='{player1}', score1='{score1}', 
 player2='{player2}', score1='{score2}')'''.replace('\n', ' ')
 
-    def serializing(self) -> dict:
-        ''''''
-        return {'match': self.match}
-
     def attributes_are_not_none(self):
         [player1, score1], [player2, score2] = self.match
         return None in (player1, score1, player2, score2)
@@ -30,4 +26,12 @@ player2='{player2}', score1='{score2}')'''.replace('\n', ' ')
             print(f'\n{self.__str__()}\n')
         else:
             print('The match is not correctly defined, try again after completing his information')
+
+    @staticmethod
+    def serializing_matchs(matchs):
+        return {'matchs': [match.match for match in matchs]}
+
+    @staticmethod
+    def unserializing_matchs(serial_matchs):
+        return [Match(player1=p1,score1=s1,player2=p2,score2=s2) for ([p1,s1],[p2,s2]) in serial_matchs['matchs']]
 
