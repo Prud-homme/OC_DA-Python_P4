@@ -1,4 +1,9 @@
-import chess.views.main_menu as main_menu
-import chess.views.tournaments as tournaments
-import chess.views.players as players
-import chess.views.reports as reports
+import os, sys
+currentdir = os.path.dirname(os.path.realpath(__file__))
+sys.path.append(currentdir)
+import view_menu
+import view_match
+import view_player
+import view_tournament
+import view_turn 
+from view_master import entry_request
