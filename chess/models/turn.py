@@ -27,14 +27,17 @@ class Turn:
         """"""
         self.end_date = self.get_current_time()
 
-    def serializing(self, serial_matchs: dict) -> dict:
+    def serializing(self, match_object, player_object) -> dict:
         """"""
-        return {
+        #breakpoint()
+        test = {
             "name": self.name,
             "start_date": self.start_date,
             "end_date": self.end_date,
-            "matchs": serial_matchs,
+            "matchs": match_object.serializing_matchs(self.matchs, player_object),
         }
+        #breakpoint()
+        return test
 
     def unserializing(self, serial_turn: dict, unserial_matchs: list) -> None:
         """"""
@@ -45,8 +48,7 @@ class Turn:
 
     def display(self):
         if self.name != None:
-            end_string = {True: f"The turn ended on {self.end_date}.", False: ""}
-            print(f"{self.__str__()} {end_string[self.end_date!=None]}")
+            print(f"{self.__str__()}")
 
             if len(self.matchs) > 0:
                 match_number = 1
@@ -66,58 +68,35 @@ class Turn:
         return now.strftime("Date: %d/%m/%Y, Time: %H:%M")
 
     @staticmethod
-    def serializing_turns(match_object, turns):
+    def serializing_turns(match_object, player_object, turns):
         # return {
         #     "turns": [
         #         turn.serializing(match_object.serializing_matchs(turn.matchs))
         #         for turn in turns
         #     ]
         # }
-        return [
-            turn.serializing(match_object.serializing_matchs(turn.matchs))
-            for turn in turns
-        ]
+        ##breakpoint()
+        return [turn.serializing(match_object, player_object) for turn in turns]
         
 
     @staticmethod
-    def unserializing_turns(match_object, serial_turns):
+    def unserializing_turns(match_object, player_object, serial_turns):
         turns = []
+        #breakpoint()
         for serial_turn in serial_turns:
-            # breakpoint()
+            # #breakpoint()
             name, start_date, end_date = (
                 serial_turn["name"],
                 serial_turn["start_date"],
                 serial_turn["end_date"],
             )
-            matchs = match_object.unserializing_matchs(serial_turn["matchs"])
+            matchs = match_object.unserializing_matchs(serial_turn["matchs"], player_object)
+            #breakpoint()
             turns.append(
                 Turn(name=name, start_date=start_date, end_date=end_date, matchs=matchs)
             )
         return turns
 
-    @staticmethod
-    def display_matchs(
-        players_table, player_object, generated_matchs, display_number=True
-    ):
-        message = ""
-        if len(generated_matchs) == 0:
-            return None
-        number = 0
-        for match in generated_matchs:
-            (player1_id, player2_id) = match
-            player1_name = player_object.get_player_name_with_id(
-                players_table, player1_id
-            )
-            player2_name = player_object.get_player_name_with_id(
-                players_table, player2_id
-            )
 
-            if None in (player1_name, player2_name):
-                return None
-            if not display_number:
-                number = ""
-            else:
-                number += 1
-            message += f"""Match {number}: [{player1_id}] {player1_name} VS [{player2_id}] {player2_name}\n"""
-
-        return message
+    def list_players_pair_complete(self):
+        return [match.get_players() for match in self.matchs]

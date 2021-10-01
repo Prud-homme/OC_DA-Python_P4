@@ -62,7 +62,7 @@ class Table:
 
     def exist_serial_data(self, serial_data: dict) -> bool:
         """Gives the existence of a item in the table thanks to its serialized data"""
-        breakpoint()
+        ##breakpoint()
         if self.search_items(serial_data) != None:
             return True
         return None

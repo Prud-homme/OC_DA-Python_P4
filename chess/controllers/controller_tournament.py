@@ -1,43 +1,16 @@
 from datetime import datetime
-
 import os, sys
 
 currentdir = os.path.dirname(os.path.realpath(__file__))
 chessdir = os.path.dirname(currentdir)
 sys.path.append(chessdir)
 
-# appdir = os.path.dirname(chessdir)
-# sys.path.append(appdir)
-# import chess.views
-
-# from chess.settings import PLAYERS_TABLE, TIME_CONTROL, TOURNAMENTS_TABLE, SCORE_VALUES
-# from chess.models import Match, Player, Tournament, Turn
-# from chess.database import Table
-
 from settings import PLAYERS_TABLE, TIME_CONTROL, TOURNAMENTS_TABLE, SCORE_VALUES
 from models import Match, Player, Tournament, Turn
 from database import Table
-
-"""
-from chess.views import (
-    views_menu,
-    views_match,
-    views_player,
-    views_tournament,
-    views_turn,
-)
-"""
-# from chess.views import menu as views_menu
-# import chess.views as views
 import views
 from controllers.controller_master import get_valid_entry
-
-# print(views.views_tournament)
 from controllers.pair_generation import generate_pairs_swiss_system
-
-# from chess.logger import logger
-# import chess.check_entry as check_entry
-# from controllers.pair_generation import generate_pairs_swiss_system
 from logger import logger
 from controllers.checks.check import (
     choice_is_valid,
@@ -49,9 +22,7 @@ from controllers.checks.check import (
     entry_is_valid,
 )
 from controllers.checks import check
-
 from views.view_master import entry_request
-
 from controllers.controller_player import append_players
 
 
@@ -81,11 +52,11 @@ class TournamentController:
 
         self.tournament = self.model_tournament()
         self.turn = None
-        self.match = None
+        self.match = self.model_match()
         self.player = self.model_player()
         self.generated_matchs = None
+        self.previous_matchs = None
 
-    #######################################################################################
     def run(self):
         """menu principal des tournoi"""
         menu = f"""---  Tournaments menu ---
@@ -102,12 +73,10 @@ class TournamentController:
         }
 
         while choice != "0":
-            #breakpoint()
+            breakpoint()
             choice = entry_request(menu)
             if choice_is_valid(choice, handler):
                 handler[choice]()
-
-    ####################################################################################### ? erreur kwargs >>> kwargs=**kwargs
 
     def new_tournament(self):
         """creation d'un tournoi et ajout a la bdd"""
@@ -162,11 +131,13 @@ class TournamentController:
         )
         append_players(self.tournament, self.model_player, self.table_players)
         self.tournament.insert_in_database(
-            self.table_tournaments, self.model_match(), self.model_turn()
+            self.table_tournaments,
+            self.model_match(),
+            self.model_turn(),
+            self.model_player(),
         )
+        self.previous_matchs = []
         self.resume_tournament()
-
-    #######################################################################################
 
     def load_tournament(self):
         """chargement d'un tournoi depuis bdd"""
@@ -200,32 +171,26 @@ class TournamentController:
                 check_functions=[entry_is_integer_under_max_value],
                 max_value=len(results),
             )
-            ###breakpoint()
-            # if tournament_selected != None:
+
             self.tournament.unserializing(
                 self.model_match(),
                 self.model_turn(),
                 self.model_player(),
                 results[int(tournament_selected) - 1],
             )
-            ###breakpoint()
+
+            self.previous_matchs = self.tournament.list_previous_matchs()
             self.resume_tournament()
 
         else:
             print("No tournament")  # temporaire
             return None
 
-    #######################################################################################
     def request_display_info(self):
         """afficher info d'un tournoi"""
         self.tournament.display()
         self.tournament.display_turns()
         self.tournament.display_players()
-
-        # for player_id in self.tournament.players:
-        #     self.player.load_from_database_with_id(self.table_players, player_id)
-        #     self.player.display(player_id)
-        # self.player = self.model_player()
 
     def display_current_match(self):
         """affiche les matchs généré"""
@@ -233,39 +198,47 @@ class TournamentController:
             print("No turn in memory")
             return None
         print("Generated matchs:")
-        message = self.turn.display_matchs(
-            self.table_players, self.model_player(), self.generated_matchs
-        )
+        message = self.match.display_matchs(self.generated_matchs)
         print(message)  # temporaire
 
     def start_a_turn(self):
         """demarer un nouveau tour"""
-        # start
-        ##breakpoint()
         if self.turn != None:
             print("Turn in memory")
             return None
-        name = get_valid_entry(
-            input_fonction=entry_request,
-            message="> Enter a turn name: ",
-            check_functions=[check.entry_is_not_empty],
-        )
+        if len(self.tournament.turns) == self.tournament.turns_number:
+            print("all turns defined")
+            self.run()
+            return None
+        # name = get_valid_entry(
+        #    input_fonction=entry_request,
+        #    message="> Enter a turn name: ",
+        #    check_functions=[check.entry_is_not_empty],
+        # )
+        name = f"Round {len(self.tournament.turns)+1}"
         self.turn = self.model_turn(name=name)
+
         if len(self.tournament.turns) == 0:
             self.generated_matchs = generate_pairs_swiss_system(
                 self.tournament.players,
-                rankings=self.tournament.load_rankings(self.table_players),
+                rankings=self.tournament.load_rankings(),
             )
         else:
             self.generated_matchs = generate_pairs_swiss_system(
-                self.tournament.players, scores=self.tournament.load_scores()
+                self.tournament.players,
+                scores=self.tournament.load_scores(),
+                previous_matchs=self.previous_matchs,
             )
+        self.previous_matchs.extend(self.generated_matchs)
         self.display_current_match()
 
     def complete_match(self):
         """entrer le score d'un match"""
         if self.turn == None:
             print("No turn in memory")
+            return None
+        elif len(self.turn.matchs) == len(self.generated_matchs):
+            print("all matchs defined")
             return None
         self.display_current_match()
         match_selected = get_valid_entry(
@@ -274,21 +247,22 @@ class TournamentController:
             check_functions=[entry_is_integer_under_max_value],
             max_value=len(self.generated_matchs),
         )
+        players_pair = self.generated_matchs[int(match_selected) - 1]
+        if self.model_match().match_already_registered(players_pair, self.turn.matchs):
+            print("Match already registered")
+            return None
+
         match = []
-        for player_id in self.generated_matchs[int(match_selected) - 1]:
-            player_name = self.model_player().get_player_name_with_id(
-                self.table_players, player_id
-            )
+        for player in players_pair:
+
             player_score = get_valid_entry(
                 input_fonction=entry_request,
-                message=f"> Enter a score for [{player_id}] {player_name} (0, 1 or 0.5): ",
+                message=f"> Enter a score for {' '.join((player.firstname, player.lastname))} (0, 1 or 0.5): ",
                 check_functions=[entry_belongs_list],
                 allowed_list=["0", "1", "0.5"],
             )
-            match.append([player_id, float(player_score)])
-        # breakpoint()
+            match.append([player, float(player_score)])
         self.turn.add_match(self.model_match(match=tuple(match)))
-        # breakpoint()
 
     def complete_turn(self):
         """terminer un tour"""
@@ -296,11 +270,8 @@ class TournamentController:
             print("No turn in memory")
             return None
         if len(self.turn.matchs) != len(self.generated_matchs):
-            message = self.turn.display_matchs(
-                self.table_players,
-                self.model_player(),
-                self.model_match().list_players(self.turn.matchs),
-                display_number=False,
+            message = self.model_match().display_matchs(
+                self.turn.list_players_pair_complete(), view_complete=True
             )
             if message == None:
                 print(
@@ -312,15 +283,17 @@ class TournamentController:
                     + message
                     + "\nPlease complete the other matchs before finishing the turn."
                 )
-            self.complete_match()
 
         if len(self.turn.matchs) == len(self.generated_matchs):
-            # breakpoint()
             self.turn.stop_turn()
             self.tournament.add_turn(self.turn)
-            # breakpoint()
             self.turn = None
-            self.tournament.serializing(self.model_match(), self.model_turn())
+            self.tournament.update_in_database(
+                self.table_tournaments,
+                self.model_match(),
+                self.model_turn(),
+                self.model_player(),
+            )
 
     def valid_resume(self):
         """menu pour reprendre un tournoi qui a tout le nécéssaire de définit"""
@@ -341,14 +314,12 @@ class TournamentController:
 0: Return to tournament menu
 > Select an option: """
         while choice != "0":
-            breakpoint()
             choice = entry_request(menu)
             if choice_is_valid(choice, handler):
                 handler[choice]()
 
     def resume_tournament(self):
         """reprendre ou non un tournoi en memoire en fonction de ces infos si elle sont complete ou non"""
-        ##breakpoint()
         if (
             self.tournament.attributes_are_not_none()
             and self.tournament.all_players_defined()

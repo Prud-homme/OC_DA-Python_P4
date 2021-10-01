@@ -48,6 +48,7 @@ players_number={self.players_number})""".replace(
 
     def serializing(self, match_object, turn_object, player_object) -> None:
         """"""
+        ##breakpoint()
         return {
             "name": self.name,
             "location": self.location,
@@ -57,7 +58,7 @@ players_number={self.players_number})""".replace(
             "turns_number": self.turns_number,
             "players_number": self.players_number,
             "players": player_object.serializing_players_list(self.players),
-            "turns": turn_object.serializing_turns(match_object, self.turns),
+            "turns": turn_object.serializing_turns(match_object, player_object, self.turns),
         }
 
     def unserializing(self, match_object, turn_object, player_object, serial_tournament: dict) -> None:
@@ -69,29 +70,26 @@ players_number={self.players_number})""".replace(
         self.time_control = serial_tournament["time_control"]
         self.turns_number = serial_tournament["turns_number"]
         self.players_number = serial_tournament["players_number"]
-        #breakpoint()
+        ##breakpoint()
         self.players = player_object.unserializing_players_list(serial_tournament["players"])
         self.turns = turn_object.unserializing_turns(
-            match_object, serial_tournament["turns"]
+            match_object, player_object, serial_tournament["turns"]
         )
 
     def load_scores(self) -> list:
         scores = [0] * len(self.players)
+        serial_players = [player.serializing() for player in self.players]
         for turn in self.turns:
             for match in turn.matchs:
-                ([player1, score1], [player2, score2]) = match.match
-                index1 = self.players.index(player1)
-                index2 = self.players.index(player2)
+                [player1, score1], [player2, score2] = match.match
+                index1 = serial_players.index(player1.serializing())
+                index2 = serial_players.index(player2.serializing())
                 scores[index1] += float(score1)
                 scores[index2] += float(score2)
         return scores
 
-    def load_rankings(self, players_table) -> list:
-        ranking = []
-        for player_id in self.players:
-            player_data = players_table.get_item_with_id(player_id)
-            ranking.append(int(player_data["ranking"]))
-        return ranking
+    def load_rankings(self) -> list:
+        return [player.ranking for player in self.players]
 
     def serialised_information_for_research(self) -> dict:
         """"""
@@ -129,9 +127,9 @@ players_number={self.players_number})""".replace(
             return tournaments_table.get_id(self.serialised_information_for_research())
         return None
 
-    def insert_in_database(self, tournaments_table, match_object, turn_object) -> None:
+    def insert_in_database(self, tournaments_table, match_object, turn_object, player_object) -> None:
         if not self.exist_in_database(tournaments_table):
-            tournaments_table.create_item(self.serializing(match_object, turn_object))
+            tournaments_table.create_item(self.serializing(match_object, turn_object, player_object))
             # print('Successful insert.')
         else:
             print(
@@ -154,10 +152,11 @@ players_number={self.players_number})""".replace(
         else:
             print("Load impossible, tournament does not exist in the database.")
 
-    def update_in_database(self, tournaments_table) -> None:
-        tournament_id = self.get_id_in_database()
+    def update_in_database(self, tournaments_table, match_object, turn_object, player_object) -> None:
+        tournament_id = self.get_id_in_database(tournaments_table)
         if tournament_id != None:
-            tournaments_table.update_item(self.serializing(), tournament_id)
+            ##breakpoint()
+            tournaments_table.update_item(self.serializing(match_object, turn_object, player_object), tournament_id)
             # print('Successful update.')
         else:
             print("Update impossible, tournament does not exist in the database.")
@@ -203,6 +202,9 @@ players_number={self.players_number})""".replace(
             for turn in self.turns
             for ([player1, score1], [player2, score2]) in turn.matchs
         ]
+
+    def list_previous_matchs(self):
+        return [match.get_serial_players() for turn in self.turns for match in turn.matchs]
 
 
 if __name__ == "__main__":

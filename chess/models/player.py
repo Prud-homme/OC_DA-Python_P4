@@ -24,7 +24,7 @@ His ranking is {self.ranking}.""".replace(
     def __repr__(self) -> None:
         return f"""Player(firstname='{self.firstname}', lastname='{self.lastname}',
 birthdate='{self.birthdate}', gender='{self.gender}',
-ranking='{self.ranking}')""".replace(
+ranking={self.ranking})""".replace(
             "\n", " "
         )
 
@@ -35,7 +35,7 @@ ranking='{self.ranking}')""".replace(
             "lastname": self.lastname,
             "birthdate": self.birthdate,
             "gender": self.gender,
-            "ranking": self.ranking,
+            "ranking": int(self.ranking),
         }
 
     def unserializing(self, serial_player: dict) -> None:
@@ -44,7 +44,7 @@ ranking='{self.ranking}')""".replace(
         self.lastname = serial_player["lastname"]
         self.birthdate = serial_player["birthdate"]
         self.gender = serial_player["gender"]
-        self.ranking = serial_player["ranking"]
+        self.ranking = int(serial_player["ranking"])
 
     def attributes_are_not_none(self) -> bool:
         return None not in (
@@ -57,6 +57,7 @@ ranking='{self.ranking}')""".replace(
 
     def exist_in_database(self, players_table) -> bool:
         if self.attributes_are_not_none():
+            #breakpoint()
             return players_table.exist_serial_data(self.serializing())
         return False
 
@@ -87,7 +88,7 @@ ranking='{self.ranking}')""".replace(
             print("Load impossible, player does not exist in the database.")
 
     def update_in_database(self, players_table):
-        player_id = self.get_id_in_database()
+        player_id = self.get_id_in_database(players_table)
         if player_id != None:
             players_table.update_item(self.serializing(), player_id)
             # print('Successful update.')
@@ -115,6 +116,7 @@ ranking='{self.ranking}')""".replace(
 
     @staticmethod
     def serializing_players_list(players_list):
+        #breakpoint()
         return [player.serializing() for player in players_list]
 
     # @staticmethod
@@ -122,13 +124,13 @@ ranking='{self.ranking}')""".replace(
     #     return [Player().get_id_in_database(player.serializing()) for player in players_list]
 
 
-    @staticmethod
-    def get_player_name_with_id(players_table, player_id):
-        if players_table.exist_id(player_id):
-            player_serial_data = players_table.get_item_with_id(player_id)
-            return " ".join(
-                (player_serial_data["firstname"], player_serial_data["lastname"])
-            )
-        else:
-            print("Load impossible, player does not exist in the database.")
-            return None
+    # @staticmethod
+    # def get_player_name_with_id(players_table, player_id):
+    #     if players_table.exist_id(player_id):
+    #         player_serial_data = players_table.get_item_with_id(player_id)
+    #         return " ".join(
+    #             (player_serial_data["firstname"], player_serial_data["lastname"])
+    #         )
+    #     else:
+    #         print("Load impossible, player does not exist in the database.")
+    #         return None
