@@ -5,13 +5,19 @@ currentdir = os.path.dirname(os.path.realpath(__file__))
 chessdir = os.path.dirname(currentdir)
 sys.path.append(chessdir)
 
+from logger import logger
+
+cls = lambda: os.system('cls')
+def pause():
+    programPause = input("\x1b[35mPress the <ENTER> key to continue...\x1b[0m")
+
 from settings import PLAYERS_TABLE, TIME_CONTROL, TOURNAMENTS_TABLE, SCORE_VALUES
 from models import Match, Player, Tournament, Turn
 from database import Table
 import views
-from controllers.controller_master import get_valid_entry
+#from controllers.controller_master import get_valid_entry
 from controllers.pair_generation import generate_pairs_swiss_system
-from logger import logger
+
 from controllers.checks.check import (
     choice_is_valid,
     entry_is_not_empty,
@@ -20,9 +26,11 @@ from controllers.checks.check import (
     entry_belongs_list,
     entry_is_valid_datetime,
     entry_is_valid,
+    get_valid_entry,
 )
 from controllers.checks import check
-from views.view_master import entry_request
+from views.view_master import entry_request, display_message
+from views.view_tournament import display_menu_tournament_main, display_menu_tournament_resume, display_menu_tournament_lack_players 
 from controllers.controller_player import append_players
 
 
@@ -59,46 +67,60 @@ class TournamentController:
 
     def run(self):
         """menu principal des tournoi"""
-        menu = f"""---  Tournaments menu ---
-1: New tournament
-2: Load a tournament
-3: Resume a tournament
-0: Main menu
-> Select an option: """
+        
         choice = None
         handler = {
             "1": self.new_tournament,
             "2": self.load_tournament,
             "3": self.resume_tournament,
         }
-
         while choice != "0":
-            breakpoint()
-            choice = entry_request(menu)
+            cls()
+            choice = display_menu_tournament_main()
             if choice_is_valid(choice, handler):
                 handler[choice]()
 
     def new_tournament(self):
         """creation d'un tournoi et ajout a la bdd"""
+        cls()
+        display_message('\x1b[32m>>> Create a Tournament <<<\x1b[0m')
         name = get_valid_entry(
             input_fonction=entry_request,
             message="> Enter a tournament name: ",
             check_functions=[check.entry_is_not_empty],
+            title='\x1b[32m>>> Create a Tournament <<<\x1b[0m',
         )
         location = get_valid_entry(
             input_fonction=entry_request,
             message="> Enter a tournament location: ",
             check_functions=[entry_is_not_empty],
+            title='\x1b[32m>>> Create a Tournament <<<\x1b[0m',
         )
-        date = get_valid_entry(
-            input_fonction=entry_request,
-            message="> Enter a tournament date (yyyy-mm-dd hh:mm): ",
-            check_functions=[entry_is_valid_datetime],
-        )
+
+        date_list = []
+        choice = None
+        while choice!='n':
+            date = get_valid_entry(
+                input_fonction=entry_request,
+                message="> Enter a tournament date (yyyy-mm-dd hh:mm): ",
+                check_functions=[entry_is_valid_datetime],
+                min_date_str='2000-01-01 00:00',
+                title='\x1b[32m>>> Create a Tournament <<<\x1b[0m',
+            )
+            date_list.append(date)
+
+            choice = get_valid_entry(
+                input_fonction=entry_request,
+                message=f'> Enter a new date (y, n): ',
+                check_functions=[entry_belongs_list],
+                allowed_list=['y', 'n'],
+                title='\x1b[32m>>> Create a Tournament <<<\x1b[0m',
+            )
 
         description = get_valid_entry(
             input_fonction=entry_request,
             message="> Enter a tournament description: ",
+            title='\x1b[32m>>> Create a Tournament <<<\x1b[0m',
         )
 
         time_control = get_valid_entry(
@@ -106,6 +128,7 @@ class TournamentController:
             message=f'> Enter a time control ({", ".join(self.time_controls)}): ',
             check_functions=[entry_belongs_list],
             allowed_list=self.time_controls,
+            title='\x1b[32m>>> Create a Tournament <<<\x1b[0m',
         )
 
         turns_number = get_valid_entry(
@@ -113,17 +136,19 @@ class TournamentController:
             message="> Enter a number of turns (press Enter for 4 turns): ",
             check_functions=[entry_is_positive_integer],
             default_value=4,
+            title='\x1b[32m>>> Create a Tournament <<<\x1b[0m',
         )
         players_number = get_valid_entry(
             input_fonction=entry_request,
             message="> Enter a number of players (press Enter for 8 players): ",
             check_functions=[entry_is_positive_integer],
             default_value=8,
+            title='\x1b[32m>>> Create a Tournament <<<\x1b[0m',
         )
         self.tournament = self.model_tournament(
             name=name,
             location=location,
-            date=date,
+            date=date_list,
             description=description,
             time_control=time_control,
             turns_number=int(turns_number),
@@ -143,42 +168,44 @@ class TournamentController:
         """chargement d'un tournoi depuis bdd"""
         if self.table_tournaments == None:
             return None
-
+        cls()
+        display_message('\x1b[32m>>> Load a Tournament <<<\x1b[0m')
         name = get_valid_entry(
             input_fonction=entry_request,
-            message="Press Enter to not filter by name.\n> Enter a tournament name: ",
+            message="\x1b[35mPress Enter to not filter by name.\x1b[0m\n> Enter a tournament name: ",
+            title='\x1b[32m>>> Load a Tournament <<<\x1b[0m',
         )
         location = get_valid_entry(
             input_fonction=entry_request,
-            message="Press Enter to not filter by location.\n> Enter a tournament location: ",
+            message="\x1b[35mPress Enter to not filter by location.\x1b[0m\n> Enter a tournament location: ",
+            title='\x1b[32m>>> Load a Tournament <<<\x1b[0m',
         )
         results = self.table_tournaments.search_by_name_and_location(name, location)
-
+        display_message('\x1b[32m>>> Load a Tournament <<<\x1b[0m')
         if results != None and len(results) != 0:
 
-            message = f"Number of tournament found: {len(results)}"
+            message = f"\x1b[35mNumber of tournament found: {len(results)}\x1b[0m"
             i = 1
             for result in results:
                 message += (
                     f'\n{i}: {result["name"]}, {result["location"]}, {result["date"]}'
                 )
                 i += 1
-            message += "\n> Select a tournament: "
-            print(len(results))
+            message += "\n\x1b[32m> Select a tournament: \x1b[0m"
+            #print(len(results))
             tournament_selected = get_valid_entry(
                 input_fonction=entry_request,
                 message=message,
                 check_functions=[entry_is_integer_under_max_value],
                 max_value=len(results),
+                title='\x1b[32m>>> Load a Tournament <<<\x1b[0m',
             )
-
             self.tournament.unserializing(
                 self.model_match(),
                 self.model_turn(),
                 self.model_player(),
                 results[int(tournament_selected) - 1],
             )
-
             self.previous_matchs = self.tournament.list_previous_matchs()
             self.resume_tournament()
 
@@ -188,9 +215,11 @@ class TournamentController:
 
     def request_display_info(self):
         """afficher info d'un tournoi"""
+        cls()
         self.tournament.display()
         self.tournament.display_turns()
         self.tournament.display_players()
+        pause()
 
     def display_current_match(self):
         """affiche les matchs généré"""
@@ -208,7 +237,6 @@ class TournamentController:
             return None
         if len(self.tournament.turns) == self.tournament.turns_number:
             print("all turns defined")
-            self.run()
             return None
         # name = get_valid_entry(
         #    input_fonction=entry_request,
@@ -235,7 +263,7 @@ class TournamentController:
     def complete_match(self):
         """entrer le score d'un match"""
         if self.turn == None:
-            print("No turn in memory")
+            logger.info("No turn in memory")
             return None
         elif len(self.turn.matchs) == len(self.generated_matchs):
             print("all matchs defined")
@@ -305,16 +333,22 @@ class TournamentController:
             "4": self.complete_match,
             "5": self.complete_turn,
         }
-        menu = f"""--- Tournament: {self.tournament.name} ---
-1: View tournament informations
-2: Start a turn
-3: Current matchs
-4: Complete a match
-5: Complete a turn
-0: Return to tournament menu
-> Select an option: """
         while choice != "0":
-            choice = entry_request(menu)
+            cls()
+            choice = display_menu_tournament_resume()
+            if choice_is_valid(choice, handler):
+                handler[choice]()
+
+    def lack_player(self):
+        """"""
+        choice = None
+        handler = {
+            "1": self.request_display_info,
+            "2": append_players(self.tournament, self.model_player, self.table_players),
+        }
+        while choice != "0":
+            cls()
+            choice = display_menu_tournament_resume()
             if choice_is_valid(choice, handler):
                 handler[choice]()
 
