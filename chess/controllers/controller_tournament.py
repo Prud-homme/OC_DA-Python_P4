@@ -31,7 +31,7 @@ from controllers.checks.check import (
 from controllers.checks import check
 from views.view_master import entry_request, display_message
 from views.view_tournament import display_menu_tournament_main, display_menu_tournament_resume, display_menu_tournament_lack_players 
-from controllers.controller_player import append_players
+from controllers.controller_player import get_player
 
 
 class TournamentController:
@@ -53,7 +53,7 @@ class TournamentController:
         self.views_player = kwargs.get("views_player", views.view_player)
 
         self.table_players = kwargs.get("table_players", PLAYERS_TABLE)
-        self.table_tournaments = kwargs.get("table_tournaments", TOURNAMENTS_TABLE)
+        #self.table_tournaments = kwargs.get("table_tournaments", TOURNAMENTS_TABLE)
 
         self.time_controls = kwargs.get("time_controls", TIME_CONTROL)
         self.score_values = kwargs.get("score_values", SCORE_VALUES)
@@ -154,9 +154,8 @@ class TournamentController:
             turns_number=int(turns_number),
             players_number=int(players_number),
         )
-        append_players(self.tournament, self.model_player, self.table_players)
+        get_player()#self.tournament, self.model_player, self.table_players)
         self.tournament.insert_in_database(
-            self.table_tournaments,
             self.model_match(),
             self.model_turn(),
             self.model_player(),
@@ -166,8 +165,8 @@ class TournamentController:
 
     def load_tournament(self):
         """chargement d'un tournoi depuis bdd"""
-        if self.table_tournaments == None:
-            return None
+        #if self.table_tournaments == None:
+        #    return None
         cls()
         display_message('\x1b[32m>>> Load a Tournament <<<\x1b[0m')
         name = get_valid_entry(
@@ -180,7 +179,8 @@ class TournamentController:
             message="\x1b[35mPress Enter to not filter by location.\x1b[0m\n> Enter a tournament location: ",
             title='\x1b[32m>>> Load a Tournament <<<\x1b[0m',
         )
-        results = self.table_tournaments.search_by_name_and_location(name, location)
+        results = TOURNAMENTS_TABLE.search_by_name_and_location(name, location)
+        cls()
         display_message('\x1b[32m>>> Load a Tournament <<<\x1b[0m')
         if results != None and len(results) != 0:
 
@@ -207,31 +207,36 @@ class TournamentController:
                 results[int(tournament_selected) - 1],
             )
             self.previous_matchs = self.tournament.list_previous_matchs()
+            pause()
             self.resume_tournament()
 
         else:
             print("No tournament")  # temporaire
+            pause()
             return None
 
-    def request_display_info(self):
+    def request_display_info(self, **kwargs):
         """afficher info d'un tournoi"""
         cls()
         self.tournament.display()
         self.tournament.display_turns()
         self.tournament.display_players()
         pause()
+        return None
 
     def display_current_match(self):
         """affiche les matchs généré"""
+        cls()
         if self.turn == None:
             print("No turn in memory")
             return None
-        print("Generated matchs:")
-        message = self.match.display_matchs(self.generated_matchs)
-        print(message)  # temporaire
+        display_message('\x1b[32m>>> Generated matchs <<<\x1b[0m' + self.match.display_matchs(self.generated_matchs,no_number=True))
+        pause()
 
     def start_a_turn(self):
         """demarer un nouveau tour"""
+        cls()
+        display_message('\x1b[32m>>> New turn <<<\x1b[0m')
         if self.turn != None:
             print("Turn in memory")
             return None
@@ -259,9 +264,12 @@ class TournamentController:
             )
         self.previous_matchs.extend(self.generated_matchs)
         self.display_current_match()
+        pause()
 
     def complete_match(self):
         """entrer le score d'un match"""
+        cls()
+        display_message('\x1b[32m>>> Complete match <<<\x1b[0m')
         if self.turn == None:
             logger.info("No turn in memory")
             return None
@@ -294,6 +302,8 @@ class TournamentController:
 
     def complete_turn(self):
         """terminer un tour"""
+        cls()
+        display_message('\x1b[32m>>> Complete turn <<<\x1b[0m')
         if self.turn == None:
             print("No turn in memory")
             return None
@@ -317,7 +327,6 @@ class TournamentController:
             self.tournament.add_turn(self.turn)
             self.turn = None
             self.tournament.update_in_database(
-                self.table_tournaments,
                 self.model_match(),
                 self.model_turn(),
                 self.model_player(),
@@ -339,33 +348,35 @@ class TournamentController:
             if choice_is_valid(choice, handler):
                 handler[choice]()
 
+    #def get_player(self):
+    #    return get_player(self.tournament, self.model_player, self.table_players)
+
     def lack_player(self):
         """"""
         choice = None
         handler = {
             "1": self.request_display_info,
-            "2": append_players(self.tournament, self.model_player, self.table_players),
+            "2": get_player,
         }
-        while choice != "0":
+        kwargs = {"tournament": self.tournament}
+        while choice != "0" and len(self.tournament.players) != self.tournament.players_number:
             cls()
-            choice = display_menu_tournament_resume()
+            choice = display_menu_tournament_lack_players()
             if choice_is_valid(choice, handler):
-                handler[choice]()
+                handler[choice](**kwargs)
 
     def resume_tournament(self):
         """reprendre ou non un tournoi en memoire en fonction de ces infos si elle sont complete ou non"""
-        if (
-            self.tournament.attributes_are_not_none()
-            and self.tournament.all_players_defined()
-        ):
+        if not self.tournament.attributes_are_not_none():
+            print("undefined")
+            return None
+
+        if self.tournament.all_players_defined():
             self.valid_resume()
 
-        elif (
-            self.tournament.attributes_are_not_none()
-            and not self.tournament.all_players_defined()
-        ):
+        elif not self.tournament.all_players_defined():
             print("Need more players")  # temporaire
-            append_players(self.tournament, self.model_player, self.table_players)
+            self.lack_player()
         else:
             print("no resume")  # temporaire
 

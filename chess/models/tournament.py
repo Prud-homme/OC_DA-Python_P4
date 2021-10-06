@@ -3,10 +3,14 @@ from typing import Optional  # , NewType, Tuple, List, Dict, Union
 
 
 # from chess.settings import TIME_CONTROL
-
 # TournamentMatch = NewType('TournamentMatch', Tuple[List[int,int],List[int,int]])
 # TournamentTurn = NewType('TournamentTurn', Union[str,str,str,List[TournamentMatch]])
-
+import os,sys
+currentdir = os.path.dirname(os.path.realpath(__file__))
+chessdir = os.path.dirname(currentdir)
+sys.path.append(chessdir)
+from settings import TOURNAMENTS_TABLE
+from logger import logger
 
 class Tournament:
     def __init__(self, **kwargs) -> None:
@@ -21,12 +25,12 @@ class Tournament:
         self.turns = []
 
     def __str__(self) -> None:
-        return f"""The tournament is called {self.name}
-and takes place in {self.location} on {self.date}.
-It will take place in {self.turns_number} turns
+        return f"""{self.name} is a tournament that
+takes place in {self.location} on {', '.join(self.date)}.
+It take place in {self.turns_number} turns
 with {self.players_number} players
-and {self.time_control} as time control.
-Description of the tournament: {self.description}.""".replace(
+whose time control is {self.time_control}.
+Description of the tournament: {self.description}""".replace(
             "\n", " "
         )
 
@@ -42,9 +46,13 @@ players_number={self.players_number})""".replace(
         """"""
         self.turns.append(turn)
 
-    def add_player(self, player_id) -> None:
+    def add_player(self, new_player) -> None:
         """"""
-        self.players.append(player_id)
+        if new_player!=None and new_player.serializing() not in [player.serializing() for player in self.players]:
+            self.players.append(new_player)
+            print('insertion reussie')
+        else:
+            print('insertion echouee')
 
     def serializing(self, match_object, turn_object, player_object) -> None:
         """"""
@@ -115,55 +123,55 @@ players_number={self.players_number})""".replace(
     def all_players_defined(self):
         return len(self.players) == self.players_number
 
-    def exist_in_database(self, tournaments_table) -> bool:
+    def exist_in_database(self) -> bool:
         if self.attributes_are_not_none():
-            return tournaments_table.exist_serial_data(
+            return TOURNAMENTS_TABLE.exist_serial_data(
                 self.serialised_information_for_research()
             )
         return False
 
-    def get_id_in_database(self, tournaments_table) -> Optional[int]:
+    def get_id_in_database(self) -> Optional[int]:
         if self.attributes_are_not_none():
-            return tournaments_table.get_id(self.serialised_information_for_research())
+            return TOURNAMENTS_TABLE.get_id(self.serialised_information_for_research())
         return None
 
-    def insert_in_database(self, tournaments_table, match_object, turn_object, player_object) -> None:
-        if not self.exist_in_database(tournaments_table):
-            tournaments_table.create_item(self.serializing(match_object, turn_object, player_object))
+    def insert_in_database(self, match_object, turn_object, player_object) -> None:
+        if not self.exist_in_database():
+            TOURNAMENTS_TABLE.create_item(self.serializing(match_object, turn_object, player_object))
             # print('Successful insert.')
         else:
             print(
                 "Insertion impossible, the tournament already exists in the database."
             )
 
-    def load_from_database_with_id(self, tournaments_table, tournament_id: int) -> None:
-        if tournaments_table.exist_id(tournament_id):
-            self.unserializing(tournaments_table.get_item_with_id(tournament_id))
+    def load_from_database_with_id(self, tournament_id: int) -> None:
+        if TOURNAMENTS_TABLE.exist_id(tournament_id):
+            self.unserializing(TOURNAMENTS_TABLE.get_item_with_id(tournament_id))
             # print('Successful load.')
         else:
             print("Load impossible, player does not exist in the database.")
 
     def load_from_database_with_serial_data(
-        self, tournaments_table, serial_tournament: dict, unserial_turns
+        self, serial_tournament: dict, unserial_turns
     ) -> None:
-        if tournaments_table.exist_serial_data(serial_tournament):
+        if TOURNAMENTS_TABLE.exist_serial_data(serial_tournament):
             self.unserializing(serial_tournament, unserial_turns)
             # print('Successful load.')
         else:
             print("Load impossible, tournament does not exist in the database.")
 
-    def update_in_database(self, tournaments_table, match_object, turn_object, player_object) -> None:
-        tournament_id = self.get_id_in_database(tournaments_table)
+    def update_in_database(self, match_object, turn_object, player_object) -> None:
+        tournament_id = self.get_id_in_database()
         if tournament_id != None:
             ##breakpoint()
-            tournaments_table.update_item(self.serializing(match_object, turn_object, player_object), tournament_id)
+            TOURNAMENTS_TABLE.update_item(self.serializing(match_object, turn_object, player_object), tournament_id)
             # print('Successful update.')
         else:
             print("Update impossible, tournament does not exist in the database.")
 
     def display(self) -> None:
         if self.attributes_are_not_none():
-            print(f"{self.__str__()}")
+            print(f"\x1b[32m>>> Tournament - Information <<<\x1b[0m\n{self.__str__()}")
         else:
             print(
                 "The tournament is not correctly defined, try again after completing his information"
@@ -171,17 +179,19 @@ players_number={self.players_number})""".replace(
 
     def display_turns(self):
         if len(self.turns) > 0:
+            print('\n\x1b[32m>>> Tournament - List of turns <<<\x1b[0m')
             for turn in self.turns:
                 turn.display()
         else:
-            print("No turn is defined")
+            print('\n\x1b[32m>>> Tournament - No turn is defined <<<\x1b[0m')
 
     def display_players(self):
         if len(self.players) > 0:
+            print('\x1b[32m>>> Tournament - List of players <<<\x1b[0m')
             for player in self.players:
                 player.display()
         else:
-            print("No turn is defined")
+            print('\n\x1b[32m>>> Tournament - No player is defined <<<\x1b[0m')
 
     def associate_player_ids_with_their_name(self, players_table):
         players_id_with_name = {}
