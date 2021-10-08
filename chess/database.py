@@ -92,10 +92,10 @@ class Table:
                 Query().lastname.search(lastname_searched, flags=re.IGNORECASE)
             )
 
-        if len(result1) > 0 and len(lastname_searched)==0:#len(result2) == 0:
+        if len(result1) > 0 and len(lastname_searched) == 0:  # len(result2) == 0:
             return result1
 
-        elif len(result2) > 0 and len(firstname_searched)==0:#len(result1) == 0:
+        elif len(result2) > 0 and len(firstname_searched) == 0:  # len(result1) == 0:
             return result2
 
         elif len(result1) > 0 or len(result2) > 0:

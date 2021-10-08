@@ -1,19 +1,28 @@
 def display_menu():
-    menu = """
-	--- Main menu ---
-	1: Tournaments menu
-	2: Players menu
-	3: Report and statistics
-	0: Exit
-	> Select an option: """
-    choice = input(menu)
-    print(choice.isdecimal())
-    # 4: Remove a registered player -> archiver
-    if choice.isdecimal() and int(choice) <= 3:
-        return int(choice)
-    else:
-        print("Incorrect entry, please try again.")
-        return display_menu()
+    menu = f"""\x1b[32m>>> Main menu <<<\x1b[0m
+1: Tournaments menu
+2: Report and statistics
+0: Exit
+\x1b[32m> Select an option: \x1b[0m"""
+    return input(menu)
+
+
+# def display_menu():
+#     menu = """
+# 	--- Main menu ---
+# 	1: Tournaments menu
+# 	2: Players menu
+# 	3: Report and statistics
+# 	0: Exit
+# 	> Select an option: """
+#     choice = input(menu)
+#     print(choice.isdecimal())
+#     # 4: Remove a registered player -> archiver
+#     if choice.isdecimal() and int(choice) <= 3:
+#         return int(choice)
+#     else:
+#         print("Incorrect entry, please try again.")
+#         return display_menu()
 
 
 # def display_menu():

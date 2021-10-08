@@ -1,19 +1,13 @@
 def display_menu_add_player() -> int:
-    menu = """>>> Add a player <<<
-1: Add by id
-2: Add by name
-3: Create a new player and add it
-0: Don't add any more players
-> Select an option: """
-    choice = input(menu)
-
-    if choice.isdecimal() and int(choice) <= 3:
-        return int(choice)
-    else:
-        print("Incorrect entry, please try again.")
-        return display_menu_add_player()
+    menu = """\x1b[32m>>> Add a player <<<\x1b[0m
+1: Search by name
+2: Create a new player and add it
+0: Save and don't add any more players
+\x1b[32m> Select an option: \x1b[0m"""
+    return input(menu)
 
 
+'''
 def display_search_result(result) -> int:
     """Display the players found from a search and return the selected player number"""
     if len(result) == 0:
@@ -100,3 +94,4 @@ def define_new_player():  # -> tuple ?
     gender = prompt_gender()
     ranking = prompt_ranking()
     return firstname, lastname, birthdate, gender, ranking
+'''

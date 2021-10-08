@@ -1,28 +1,27 @@
-import os, sys
+import os
+import sys
 
 currentdir = os.path.dirname(os.path.realpath(__file__))
 chessdir = os.path.dirname(currentdir)
 sys.path.append(chessdir)
 
-cls = lambda: os.system('cls')
+cls = lambda: os.system("cls")
+
+
 def pause():
     programPause = input("\x1b[35mPress the <ENTER> key to continue...\x1b[0m")
 
-from views.view_master import entry_request, display_message
 
-from controllers.checks.check import (
-    choice_is_valid,
-    entry_is_positive_integer,
-    entry_is_not_empty,
-    entry_is_valid_date,
-    entry_belongs_list,
-)
-
+from controllers.checks.check import (choice_is_valid, entry_belongs_list,
+                                      entry_is_not_empty,
+                                      entry_is_positive_integer,
+                                      entry_is_valid_date)
 from controllers.controller_master import get_valid_entry
 from models import Player
-from settings import PLAYERS_TABLE, TIME_CONTROL, TOURNAMENTS_TABLE, SCORE_VALUES
-
-from views.view_player import display_menu_add_player 
+from settings import (PLAYERS_TABLE, SCORE_VALUES, TIME_CONTROL,
+                      TOURNAMENTS_TABLE)
+from views.view_master import display_message, entry_request
+from views.view_player import display_menu_add_player
 
 # def check_player_id(**kwargs):
 #     """verifier id saisie  existe"""
@@ -49,12 +48,12 @@ from views.view_player import display_menu_add_player
 
 def search_player():
     """chercher un id dans la bdd"""
-    #table_players = kwargs.get("table_players", None)
-    #if table_players == None:
+    # table_players = kwargs.get("table_players", None)
+    # if table_players == None:
     #    return None
 
-    cls()    
-    display_message('\x1b[32m>>> Search a player <<<\x1b[0m')
+    cls()
+    display_message("\x1b[32m>>> Search a player <<<\x1b[0m")
 
     firstname = get_valid_entry(
         input_fonction=entry_request,
@@ -68,7 +67,7 @@ def search_player():
 
     if results != None and len(results) != 0:
 
-        message = f"\x1b[35mNumber of player found: {len(results)}\x1b[0m"
+        message = f"\x1b[35mNumber of player found: {len(results)}\x1b[0m\n0: Cancel"
         i = 1
         for result in results:
             message += f'\n{i}: {result["firstname"]}, {result["lastname"]}, {result["birthdate"]}, {result["gender"]}'
@@ -80,16 +79,19 @@ def search_player():
             message=message,
             check_funtions=[entry_is_positive_integer],
             max_value=len(results),
-            title='\x1b[32m>>> Search a player <<<\x1b[0m',
+            title="\x1b[32m>>> Search a player <<<\x1b[0m",
         )
-
+        if player_selected == "0":
+            print("cancel ok")  # temporaire
+            pause()
+            return None
         # if player_selected != None:
         player_serial_data = results[int(player_selected) - 1]
 
-        #player_id = table_players.get_id(player_serial_data)
-        #return player_id
+        # player_id = table_players.get_id(player_serial_data)
+        # return player_id
         player = Player(**player_serial_data)
-        pause()
+        # pause()
         return player
 
     else:
@@ -100,44 +102,44 @@ def search_player():
 
 def create_player():
     """creer un joueur et recuperer son id"""
-    #model_player = kwargs.get("model_player", None)
-    #table_players = kwargs.get("table_players", None)
-    #if model_player == None or table_players == None:
+    # model_player = kwargs.get("model_player", None)
+    # table_players = kwargs.get("table_players", None)
+    # if model_player == None or table_players == None:
     #    return None
 
-    cls()    
-    display_message('\x1b[32m>>> Create a player <<<\x1b[0m')
+    cls()
+    display_message("\x1b[32m>>> Create a player <<<\x1b[0m")
 
     firstname = get_valid_entry(
         input_fonction=entry_request,
         message="> Enter a first name: ",
         check_functions=[entry_is_not_empty],
-        title='\x1b[32m>>> Create a player <<<\x1b[0m',
+        title="\x1b[32m>>> Create a player <<<\x1b[0m",
     )
     lastname = get_valid_entry(
         input_fonction=entry_request,
         message="> Enter a last name: ",
         check_functions=[entry_is_not_empty],
-        title='\x1b[32m>>> Create a player <<<\x1b[0m',
+        title="\x1b[32m>>> Create a player <<<\x1b[0m",
     )
     birthdate = get_valid_entry(
         input_fonction=entry_request,
         message="> Enter a birth date (yyyy-mm-dd): ",
         check_functions=[entry_is_valid_date],
-        title='\x1b[32m>>> Create a player <<<\x1b[0m',
+        title="\x1b[32m>>> Create a player <<<\x1b[0m",
     )
     gender = get_valid_entry(
         input_fonction=entry_request,
         message=f"> Enter a gender (M/F): ",
         check_functions=[entry_belongs_list],
         allowed_list=["M", "F"],
-        title='\x1b[32m>>> Create a player <<<\x1b[0m',
+        title="\x1b[32m>>> Create a player <<<\x1b[0m",
     )
     ranking = get_valid_entry(
         input_fonction=entry_request,
         message="> Enter a ranking: ",
         check_functions=[entry_is_positive_integer],
-        title='\x1b[32m>>> Create a player <<<\x1b[0m',
+        title="\x1b[32m>>> Create a player <<<\x1b[0m",
     )
 
     player = Player(
@@ -149,25 +151,24 @@ def create_player():
     )
 
     player.insert_in_database()
-    #player_id = player.get_id_in_database(table_players)
+    # player_id = player.get_id_in_database(table_players)
 
-    #return player_id  # Renvoi None ou l'id
+    # return player_id  # Renvoi None ou l'id
     pause()
     return player
 
-def get_player(**kwargs):
-#    tournament, model_player, table_players
-#):  # , players_table, views_player, player):
+
+def get_player():
+    #    tournament, model_player, table_players
+    # ):  # , players_table, views_player, player):
     """menu pour ajouter un joueur a un tournoi"""
-#     menu = """>>> Add a player <<<
-# 1: Add by id
-# 2: Add by name
-# 3: Create a new player and add it
-# 0: Don't add any more players
-# > Select an option: """
-
-    tournament = kwargs.get("tournament", None)
-
+    #     menu = """>>> Add a player <<<
+    # 1: Add by id
+    # 2: Add by name
+    # 3: Create a new player and add it
+    # 0: Don't add any more players
+    # > Select an option: """
+    cls()
     choice = None
     # handler = {
     #     "1": check_player_id,
@@ -178,23 +179,27 @@ def get_player(**kwargs):
         "1": search_player,
         "2": create_player,
     }
-    #kwargs = {
+    # kwargs = {
     #    "tournament": tournament,
     #    "model_player": model_player,
     #    "table_players": table_players,
-    #}
+    # }
+    # while choice != "0":
+    #     cls()
+    #     if tournament != None and len(tournament.players) == tournament.players_number:
+    #         print('all player defined')
+    #         pause()
+    #         return None
     while choice != "0":
         cls()
-        if tournament != None and len(tournament.players) == tournament.players_number:
-            print('all player defined')
-            pause()
-            return None 
         choice = display_menu_add_player()
         if choice_is_valid(choice, handler):
             player = handler[choice]()
-            if tournament != None:
-                tournament.add_player(player)
-        '''
+            return player
+    return None
+    # if tournament != None:
+    #    tournament.add_player(player)
+    """
         if len(tournament.players) == tournament.players_number:
             print('all player defined')
             pause()
@@ -207,10 +212,10 @@ def get_player(**kwargs):
                 pause()
 
                 tournament.add_player(player)
-        '''
+    """
 
-        # if len(self.tournament.players) == self.tournament.players_number:#temporaire
-        #    print('The list of players for this tournament is complete.')#temporaire
+    # if len(self.tournament.players) == self.tournament.players_number:#temporaire
+    #    print('The list of players for this tournament is complete.')#temporaire
 
 
 # if __name__ == "__main__":

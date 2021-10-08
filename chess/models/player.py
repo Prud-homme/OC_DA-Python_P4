@@ -1,12 +1,14 @@
+# from chess.settings import PLAYERS_TABLE
+import os
 import re
+import sys
 from typing import Optional
 
-# from chess.settings import PLAYERS_TABLE
-import os,sys
 currentdir = os.path.dirname(os.path.realpath(__file__))
 chessdir = os.path.dirname(currentdir)
 sys.path.append(chessdir)
 from settings import PLAYERS_TABLE
+
 
 class Player:
     def __init__(self, **kwargs) -> None:
@@ -21,12 +23,16 @@ class Player:
         gender_equivalent = {"M": "man", "F": "woman"}
         return f"""{self.firstname} {self.lastname}
 is a {gender_equivalent[self.gender]} born on {self.birthdate}.
-His ranking is {self.ranking}.""".replace("\n", " ")
+His ranking is {self.ranking}.""".replace(
+            "\n", " "
+        )
 
     def __repr__(self) -> None:
         return f"""Player(firstname='{self.firstname}', lastname='{self.lastname}',
 birthdate='{self.birthdate}', gender='{self.gender}',
-ranking={self.ranking})""".replace("\n", " ")
+ranking={self.ranking})""".replace(
+            "\n", " "
+        )
 
     def serializing(self) -> dict:
         """"""
@@ -57,7 +63,7 @@ ranking={self.ranking})""".replace("\n", " ")
 
     def exist_in_database(self) -> bool:
         if self.attributes_are_not_none():
-            #breakpoint()
+            # breakpoint()
             return PLAYERS_TABLE.exist_serial_data(self.serializing())
         return False
 
@@ -104,7 +110,7 @@ ranking={self.ranking})""".replace("\n", " ")
             )
 
     def player_not_in_list(self, players_list):
-        #breakpoint()
+        # breakpoint()
         for player in players_list:
             if self.serializing() == player.serializing():
                 return False
@@ -116,13 +122,12 @@ ranking={self.ranking})""".replace("\n", " ")
 
     @staticmethod
     def serializing_players_list(players_list):
-        #breakpoint()
+        # breakpoint()
         return [player.serializing() for player in players_list]
 
     # @staticmethod
     # def get_id_players_list(PLAYERS_TABLE, players_list):
     #     return [Player().get_id_in_database(player.serializing()) for player in players_list]
-
 
     # @staticmethod
     # def get_player_name_with_id(PLAYERS_TABLE, player_id):
@@ -134,3 +139,22 @@ ranking={self.ranking})""".replace("\n", " ")
     #     else:
     #         print("Load impossible, player does not exist in the database.")
     #         return None
+    @staticmethod
+    def display_players(players_list, **kwargs):
+        sort_field = kwargs.get("sort_field", None)
+        if len(players_list) > 0:
+            print("\x1b[32m>>> List of players <<<\x1b[0m")
+            if sort_field != None:
+                unsorted_list = [
+                    (player.serializing()[sort_field], player)
+                    for player in players_list
+                ]
+                unsorted_list.sort()
+                display_list = [player for (field_value, player) in unsorted_list]
+            else:
+                display_list = players_list
+
+            for player in display_list:
+                player.display()
+        else:
+            print("\n\x1b[32m>>> No player is defined <<<\x1b[0m")

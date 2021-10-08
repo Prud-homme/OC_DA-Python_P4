@@ -1,16 +1,24 @@
-import re
-from typing import Optional  # , NewType, Tuple, List, Dict, Union
-
-
 # from chess.settings import TIME_CONTROL
 # TournamentMatch = NewType('TournamentMatch', Tuple[List[int,int],List[int,int]])
 # TournamentTurn = NewType('TournamentTurn', Union[str,str,str,List[TournamentMatch]])
-import os,sys
+import os
+import re
+import sys
+import time
+from typing import Optional  # , NewType, Tuple, List, Dict, Union
+
 currentdir = os.path.dirname(os.path.realpath(__file__))
 chessdir = os.path.dirname(currentdir)
 sys.path.append(chessdir)
-from settings import TOURNAMENTS_TABLE
 from logger import logger
+from settings import TOURNAMENTS_TABLE
+
+cls = lambda: os.system("cls")
+
+
+def pause():
+    programPause = input("\x1b[35mPress the <ENTER> key to continue...\x1b[0m")
+
 
 class Tournament:
     def __init__(self, **kwargs) -> None:
@@ -48,11 +56,17 @@ players_number={self.players_number})""".replace(
 
     def add_player(self, new_player) -> None:
         """"""
-        if new_player!=None and new_player.serializing() not in [player.serializing() for player in self.players]:
+        if new_player == None:
+            return None
+        if new_player.serializing() not in [
+            player.serializing() for player in self.players
+        ]:
             self.players.append(new_player)
-            print('insertion reussie')
+            print("insertion reussie")
+            time.sleep(1)
         else:
-            print('insertion echouee')
+            print("insertion echouee")
+            time.sleep(1)
 
     def serializing(self, match_object, turn_object, player_object) -> None:
         """"""
@@ -66,10 +80,14 @@ players_number={self.players_number})""".replace(
             "turns_number": self.turns_number,
             "players_number": self.players_number,
             "players": player_object.serializing_players_list(self.players),
-            "turns": turn_object.serializing_turns(match_object, player_object, self.turns),
+            "turns": turn_object.serializing_turns(
+                match_object, player_object, self.turns
+            ),
         }
 
-    def unserializing(self, match_object, turn_object, player_object, serial_tournament: dict) -> None:
+    def unserializing(
+        self, match_object, turn_object, player_object, serial_tournament: dict
+    ) -> None:
         """"""
         self.name = serial_tournament["name"]
         self.location = serial_tournament["location"]
@@ -79,7 +97,9 @@ players_number={self.players_number})""".replace(
         self.turns_number = serial_tournament["turns_number"]
         self.players_number = serial_tournament["players_number"]
         ##breakpoint()
-        self.players = player_object.unserializing_players_list(serial_tournament["players"])
+        self.players = player_object.unserializing_players_list(
+            serial_tournament["players"]
+        )
         self.turns = turn_object.unserializing_turns(
             match_object, player_object, serial_tournament["turns"]
         )
@@ -137,7 +157,9 @@ players_number={self.players_number})""".replace(
 
     def insert_in_database(self, match_object, turn_object, player_object) -> None:
         if not self.exist_in_database():
-            TOURNAMENTS_TABLE.create_item(self.serializing(match_object, turn_object, player_object))
+            TOURNAMENTS_TABLE.create_item(
+                self.serializing(match_object, turn_object, player_object)
+            )
             # print('Successful insert.')
         else:
             print(
@@ -164,7 +186,10 @@ players_number={self.players_number})""".replace(
         tournament_id = self.get_id_in_database()
         if tournament_id != None:
             ##breakpoint()
-            TOURNAMENTS_TABLE.update_item(self.serializing(match_object, turn_object, player_object), tournament_id)
+            TOURNAMENTS_TABLE.update_item(
+                self.serializing(match_object, turn_object, player_object),
+                tournament_id,
+            )
             # print('Successful update.')
         else:
             print("Update impossible, tournament does not exist in the database.")
@@ -177,21 +202,12 @@ players_number={self.players_number})""".replace(
                 "The tournament is not correctly defined, try again after completing his information"
             )
 
-    def display_turns(self):
-        if len(self.turns) > 0:
-            print('\n\x1b[32m>>> Tournament - List of turns <<<\x1b[0m')
-            for turn in self.turns:
-                turn.display()
-        else:
-            print('\n\x1b[32m>>> Tournament - No turn is defined <<<\x1b[0m')
-
-    def display_players(self):
-        if len(self.players) > 0:
-            print('\x1b[32m>>> Tournament - List of players <<<\x1b[0m')
-            for player in self.players:
-                player.display()
-        else:
-            print('\n\x1b[32m>>> Tournament - No player is defined <<<\x1b[0m')
+    def display_all_info(self, player_object, turn_object):
+        cls()
+        self.display()
+        turn_object.display_turns(self.turns)
+        player_object.display_players(self.players, sort_field="ranking")
+        pause()
 
     def associate_player_ids_with_their_name(self, players_table):
         players_id_with_name = {}
@@ -214,7 +230,18 @@ players_number={self.players_number})""".replace(
         ]
 
     def list_previous_matchs(self):
-        return [match.get_serial_players() for turn in self.turns for match in turn.matchs]
+        return [
+            match.get_serial_players() for turn in self.turns for match in turn.matchs
+        ]
+
+    @staticmethod
+    def display_all_tournaments():
+        tournaments_list = [
+            Tournament(**serial_data) for serial_data in TOURNAMENTS_TABLE.table.all()
+        ]
+        for tournament in tournaments_list:
+            print(tournament)
+        pause()
 
 
 if __name__ == "__main__":
