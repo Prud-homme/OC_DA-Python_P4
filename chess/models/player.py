@@ -1,14 +1,22 @@
+from __future__ import annotations
+
 # from chess.settings import PLAYERS_TABLE
 import os
 import re
 import sys
 from typing import Optional
-
 currentdir = os.path.dirname(os.path.realpath(__file__))
 chessdir = os.path.dirname(currentdir)
 sys.path.append(chessdir)
 from settings import PLAYERS_TABLE
 
+from typing import Optional, NewType, Union, TypedDict
+class SerializedPlayer(TypedDict):
+    firstname: str
+    lastname: str
+    birthdate: str
+    gender: str
+    ranking: int
 
 class Player:
     def __init__(self, **kwargs) -> None:
