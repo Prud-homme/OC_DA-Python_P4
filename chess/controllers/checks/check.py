@@ -1,7 +1,6 @@
 import os
 import sys
 from datetime import datetime
-
 cls = lambda: os.system("cls")
 currentdir = os.path.dirname(os.path.realpath(__file__))
 chessdir = os.path.dirname(currentdir)
