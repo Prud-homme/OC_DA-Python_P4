@@ -1,3 +1,4 @@
+"""
 import os
 import sys
 
@@ -9,20 +10,20 @@ cls = lambda: os.system("cls")
 
 
 def pause():
-    programPause = input("\x1b[35mPress the <ENTER> key to continue...\x1b[0m")
+"""
+#    programPause = input("\x1b[35mPress the <ENTER> key to continue...\x1b[0m")
 
-
+"""
 from controllers.checks.check import (choice_is_valid, entry_belongs_list,
                                       entry_is_not_empty,
                                       entry_is_positive_integer,
                                       entry_is_valid_date)
 from controllers.controller_master import get_valid_entry
 from models import Player
-from settings import (PLAYERS_TABLE, SCORE_VALUES, TIME_CONTROL,
-                      TOURNAMENTS_TABLE)
+from settings import PLAYERS_TABLE, TOURNAMENTS_TABLE, TIME_CONTROL
 from views.view_master import display_message, entry_request
 from views.view_player import display_menu_add_player
-
+"""
 # def check_player_id(**kwargs):
 #     """verifier id saisie  existe"""
 #     tournament = kwargs.get("tournament", None)
@@ -196,6 +197,7 @@ def get_player():
         if choice_is_valid(choice, handler):
             player = handler[choice]()
             return player
+    pause()
     return None
     # if tournament != None:
     #    tournament.add_player(player)
@@ -218,27 +220,24 @@ def get_player():
     #    print('The list of players for this tournament is complete.')#temporaire
 
 
-# if __name__ == "__main__":
-#     from database import Table
-#     from models import Match, Turn, Player, Tournament
+if __name__ == "__main__":
+    import os
+    import sys
 
-#     tournament = Tournament(
-#         name="a",
-#         location="a",
-#         date="2020-01-01 15:00",
-#         description="",
-#         time_control="blitz",
-#         turns_number=4,
-#         players_number=8,
-#     )
-#     table = Table("players", "test.json")
-#     append_players(tournament, Player, table)
-#     #breakpoint()
+    currentdir = os.path.dirname(os.path.realpath(__file__))
+    chessdir = os.path.dirname(currentdir)
+    sys.path.append(chessdir)
 
-#     serial = {'name': 'a', 'location': 'a', 'date': '2020-01-01 15:00', 'description': '', 'time_control': 'blitz', 'turns_number': 4, 'players_number': 8, 'players': [{'firstname': 'John', 'lastname': 'Doe', 'birthdate': '1970-01-01', 'gender': 'M', 'ranking': '45'}, {'firstname': 'Jeanne', 'lastname': 'Doe', 'birthdate': '1975-01-01', 'gender': 'F', 'ranking': '20'}], 'turns': []}
-#     #breakpoint()
-#     tou=Tournament()
-#     print('\n\n',tou.players,'\n\n')
-#     tou.unserializing(Match(),Turn(),Player(),serial)
-#     print('\n\n',tou.players,'\n\n')
-#     #breakpoint()
+    from utils import cls, pause
+    from views.view_player import display_menu_add_player
+    from controllers.checks.check import (choice_is_valid, entry_belongs_list,
+                                      entry_is_not_empty,
+                                      entry_is_positive_integer,
+                                      entry_is_valid_date,get_valid_entry)
+
+    from views.view_master import display_message, entry_request
+    from settings import PLAYERS_TABLE
+    from models import Player
+    player = get_player()
+    if player != None:
+        player.display()
