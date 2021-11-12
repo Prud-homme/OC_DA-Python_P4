@@ -1,1 +1,0 @@
-from chess.settings.settings import DATABASE

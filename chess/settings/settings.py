@@ -1,1 +1,0 @@
-DATABASE = 'db.json'
