@@ -1,7 +1,8 @@
 # Chess tournament management software - Swiss system
 ## Overview
-
 ![Screenshot of menu](https://github.com/Prud-homme/image-data-bank/blob/main/projet_4/menu.gif?raw=true)
+
+ [Link to screenshot](#screenshot)
 ## Screenshot
 ℹ️ Use Ctrl + Click for open in new tab
 ### Tournament menu
