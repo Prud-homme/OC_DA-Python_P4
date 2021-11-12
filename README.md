@@ -11,6 +11,31 @@ About this program :
 [Link to screenshot](#screenshot)
 ## Program setup
 ### Creation of a virtual environment
+<details>
+  <summary>On Windows</summary>
+  
+  If you configured the PATH and PATHEXT variables for your Python installation, run:
+  ```
+  $ python -m venv c:\path\to\myenv
+  ```
+
+  Alternatively:
+  ```
+  $ c:\path\of\python\installation\python -m venv c:\path\to\myenv
+  ```
+  For example: 
+  ```
+  $ c:\Python\Python38\python -m venv c:\path\to\myenv
+  $ myenv\Scripts\activate.bat
+  (myenv) $ pip3 install -r requirements.txt
+  ```
+
+  To disable the virtual environment, run:
+  ```
+  (myenv) $ deactivate
+  ```
+</details>
+
 #### On Windows
 If you configured the PATH and PATHEXT variables for your Python installation, run:
 ```
@@ -51,9 +76,16 @@ When the virtual environment is activated and you are placed in the folder where
 ```
 (windows-env) $ python main.py
 ```
-
 ```
 (unix-mac-env) $ python3 main.py
+```
+
+In order to get more information during the execution of the program you can run the command:
+```
+(windows-env) $ python main.py --loglevel INFO
+```
+```
+(unix-mac-env) $ python3 main.py --loglevel INFO
 ```
 ## Flake8
 ```
