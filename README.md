@@ -51,8 +51,14 @@ When the virtual environment is activated and you are placed in the folder where
 ```
 (windows-env) $ python main.py
 ```
+
 ```
 (unix-mac-env) $ python3 main.py
+```
+## Flake8
+```
+flake8 --exclude .git,__pycache__,env --max-line-length=119 --format=html --htmldir=flake-report
+
 ```
 ## Screenshot
 ℹ️ Use Ctrl + Click for open in new tab
