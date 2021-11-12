@@ -1,6 +1,5 @@
 import re
 from typing import Optional
-
 from tinydb import Query, TinyDB
 
 
@@ -75,22 +74,16 @@ class Table:
         else:
             return None
 
-    def search_by_first_and_last_name(
-        self, firstname_searched: str, lastname_searched: str
-    ) -> Optional[list]:
+    def search_by_first_and_last_name(self, firstname_searched: str, lastname_searched: str) -> Optional[list]:
         """Search by name (if the field exist) in the table"""
         result1 = []
         result2 = []
 
         if self.table.search(Query().firstname.exists()):
-            result1 = self.table.search(
-                Query().firstname.search(firstname_searched, flags=re.IGNORECASE)
-            )
+            result1 = self.table.search(Query().firstname.search(firstname_searched, flags=re.IGNORECASE))
 
         if self.table.search(Query().lastname.exists()):
-            result2 = self.table.search(
-                Query().lastname.search(lastname_searched, flags=re.IGNORECASE)
-            )
+            result2 = self.table.search(Query().lastname.search(lastname_searched, flags=re.IGNORECASE))
 
         if len(result1) > 0 and len(lastname_searched) == 0:  # len(result2) == 0:
             return result1
@@ -104,22 +97,16 @@ class Table:
         else:
             return None
 
-    def search_by_name_and_location(
-        self, name_searched: str, location_searched: str
-    ) -> Optional[list]:
+    def search_by_name_and_location(self, name_searched: str, location_searched: str) -> Optional[list]:
         """Search by name (if the field exist) in the table"""
         result1 = []
         result2 = []
 
         if self.table.search(Query().name.exists()):
-            result1 = self.table.search(
-                Query().name.search(name_searched, flags=re.IGNORECASE)
-            )
+            result1 = self.table.search(Query().name.search(name_searched, flags=re.IGNORECASE))
 
         if self.table.search(Query().location.exists()):
-            result2 = self.table.search(
-                Query().location.search(location_searched, flags=re.IGNORECASE)
-            )
+            result2 = self.table.search(Query().location.search(location_searched, flags=re.IGNORECASE))
 
         if len(result1) > 0 and len(result2) == 0:
             return result1
