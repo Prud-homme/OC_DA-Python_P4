@@ -1,21 +1,29 @@
+import argparse
 import logging
 
-# # create logger
-# logger = logging.getLogger("Chess App")
-# logger.setLevel(logging.DEBUG)
 
-# # create console handler and set level to debug
-# ch = logging.StreamHandler()
-# ch.setLevel(logging.DEBUG)
+parser = argparse.ArgumentParser()
+parser.add_argument(
+    "-log", "--loglevel", default="warning", help="Provide logging level. Example --loglevel debug, default=warning"
+)
 
-# # create formatter
-# formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+args = parser.parse_args()
 
-# # add formatter to ch
-# ch.setFormatter(formatter)
+loglevel = args.loglevel.upper()
 
-# # add ch to logger
-# logger.addHandler(ch)
+
+def setlevel(logger, loglevel):
+    if loglevel == "DEBUG":
+        logger.setLevel(logging.DEBUG)
+    elif loglevel == "INFO":
+        logger.setLevel(logging.INFO)
+    elif loglevel == "ERROR":
+        logger.setLevel(logging.ERROR)
+    elif loglevel == "CRITICAL":
+        logger.setLevel(logging.CRITICAL)
+    else:
+        logger.setLevel(logging.WARNING)
+    return logger
 
 
 class CustomFormatter(logging.Formatter):
@@ -44,14 +52,16 @@ class CustomFormatter(logging.Formatter):
 
 # create logger with 'spam_application'
 logger = logging.getLogger("Chess App")
-logger.setLevel(logging.DEBUG)
+logger = setlevel(logger, loglevel)
 
 # create console handler with a higher log level
 ch = logging.StreamHandler()
-ch.setLevel(logging.DEBUG)
+ch = setlevel(ch, loglevel)
 
+# add formatter to ch
 ch.setFormatter(CustomFormatter())
 
+# add ch to logger
 logger.addHandler(ch)
 
 if __name__ == "__main__":
