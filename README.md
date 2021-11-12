@@ -47,6 +47,13 @@ To disable the virtual environment, run:
 ```
 
 ## Program execution
+When the virtual environment is activated and you are placed in the folder where the main file is located, launch the program with the command:
+```
+(windows-env) $ python main.py
+```
+```
+(unix-mac-env) $ python3 main.py
+```
 ## Screenshot
 ℹ️ Use Ctrl + Click for open in new tab
 ### Tournament menu
