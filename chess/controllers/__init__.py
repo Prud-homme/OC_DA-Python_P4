@@ -1,9 +1,4 @@
-import os
-import sys
-
-currentdir = os.path.dirname(os.path.realpath(__file__))
-sys.path.append(currentdir)
-
-from controller_tournament import TournamentController
-
-# from pair_generation import generate_pairs_swiss_system
+from .tournament import TournamentController
+from .report import launch_report
+from .checks.check import choice_is_valid
+from .player import edit_player_ranking
