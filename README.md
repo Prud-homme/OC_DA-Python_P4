@@ -1,8 +1,14 @@
-# Chess tournament management software - Swiss system
+# Chess tournament management - Swiss system
 ## Overview
 ![Screenshot of menu](https://github.com/Prud-homme/image-data-bank/blob/main/projet_4/menu.gif?raw=true)
 
  [Link to screenshot](#screenshot)
+
+About this program :
+- it allows to manage chess tournaments according to the Swiss system
+- it allows to manage the rating of registered players 
+- it allows to display different reports
+- it uses a json database to store tournaments and players
 ## Screenshot
 ℹ️ Use Ctrl + Click for open in new tab
 ### Tournament menu
