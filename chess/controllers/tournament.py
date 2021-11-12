@@ -363,7 +363,7 @@ class TournamentController:
             self.turn = None
             autopause()
 
-    def valid_resume(self) -> str:
+    def valid_resume(self) -> None:
         """
         Selection of a choice from the resume menu.
         After a choice among the selection, it launches the function associated
@@ -397,9 +397,7 @@ class TournamentController:
             logger.info("All turns defined")
             autopause()
 
-        # return "0"
-
-    def lack_player(self) -> str:
+    def lack_player(self) -> None:
         """
         Menu to register a new player in a tournament
         After a choice among the selection, it launches the function associated
@@ -421,9 +419,8 @@ class TournamentController:
                 handler[choice]()
         if len(self.tournament.players) == self.tournament.players_number:
             logger.info("all player defined")
-        # return "0"
 
-    def tournament_is_complete(self) -> str:
+    def tournament_is_complete(self) -> None:
         """
         Menu to display all the information of a finished tournament
         After a choice among the selection, it launches the function associated
@@ -440,7 +437,6 @@ class TournamentController:
                 message = handler[choice]()
                 display_message(message)
                 pause()
-        # return "0"
 
     def resume_tournament(self) -> None:
         """
@@ -453,7 +449,6 @@ class TournamentController:
             autopause()
             return None
         choice = None
-        # while choice != "0":
         if self.tournament.all_players_defined() and len(self.tournament.turns) == self.tournament.turns_number:
             choice = self.tournament_is_complete()
 
