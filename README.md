@@ -53,20 +53,6 @@ About this program :
   ```
 </details>
 
-#### On Unix or MacOS
-```
-$ python3 -m venv /path/to/myenv
-
-$ source myenv/bin/activate
-
-(myenv) $ pip3 install -r requirements.txt
-```
-
-To disable the virtual environment, run:
-```
-(myenv) $ deactivate
-```
-
 ## Program execution
 When the virtual environment is activated and you are placed in the folder where the main file is located, launch the program with the command:
 ```
