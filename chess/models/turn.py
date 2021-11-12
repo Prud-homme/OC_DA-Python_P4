@@ -27,7 +27,7 @@ class Turn:
 
     def __str__(self) -> str:
         end_string = {True: f" and ended on {self.end_date}.", False: "."}
-        return f"{self.name} started on {self.start_date}{end_string[self.end_date!=None]}"
+        return f"{self.name} started on {self.start_date}{end_string[self.end_date is not None]}"
 
     def __repr__(self) -> str:
         return f"""Turn(name='{self.name}',
@@ -270,12 +270,12 @@ matches={self.matches})""".replace(
         containing the information given by the display method of each turn
         """
         if len(turns_list) > 0:
-            message = "\n\x1b[32m♟️ Tournament - List of turns ♟️\x1b[0m"
+            message = "\x1b[32m♟️ Tournament - List of turns ♟️\x1b[0m"
             for turn in turns_list:
                 message += turn.display()
             return message
         else:
-            return "\n\x1b[32m♟️ Tournament - No turn is defined ♟️\x1b[0m"
+            return "\x1b[32m♟️ Tournament - No turn is defined ♟️\x1b[0m"
 
     @staticmethod
     def display_turns_without_match(turns_list: list[Turn]) -> str:
@@ -284,12 +284,12 @@ matches={self.matches})""".replace(
         containing the information given by the __str__ method of each turn
         """
         if len(turns_list) > 0:
-            message = f"\n\x1b[32m♟️ List of turns ♟️\x1b[0m"
+            message = f"\x1b[32m♟️ List of turns ♟️\x1b[0m"
             for turn in turns_list:
                 message += turn.__str__()
             return message
         else:
-            return f"\n\x1b[32m♟️ No turn is defined ♟️\x1b[0m"
+            return f"\x1b[32m♟️ No turn is defined ♟️\x1b[0m"
 
     def all_matches_defined(self) -> bool:
         """Checks if the list of matches of the instance does not contain undefined data"""

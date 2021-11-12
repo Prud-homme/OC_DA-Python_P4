@@ -207,14 +207,14 @@ class TournamentController:
             title=title,
         )
         results = TOURNAMENTS_TABLE.search_by_name_and_location(name, location)
-        clear_display()
-        display_message("\x1b[32m>>> Load a Tournament <<<\x1b[0m")
+        
         if results is not None and len(results) != 0:
 
             message = f"\x1b[35mNumber of tournament found: {len(results)}\x1b[0m\n0: Cancel load"
             i = 1
             for result in results:
-                message += f'\n{i}: {result["name"]}, {result["location"]}, {result["date"]}'
+                message += f"""\n{i}: {result["name"]}, {result["location"]},
+    {" and ".join([f"{key} on {value}" for key, value in result["date"].items()])}"""
                 i += 1
             message += "\n\x1b[32m> Select a tournament: \x1b[0m"
             tournament_selected = get_valid_entry(
@@ -351,10 +351,10 @@ class TournamentController:
             display_message(message)
             register = get_valid_entry(
                 input_function=entry_request,
-                message=f"> Confirm match registration ? (y/n)\nAnswer : ",
+                message=f"> Confirm matches registration ? (y/n)\nAnswer : ",
                 check_functions=[entry_belongs_list],
                 allowed_list=["y", "n"],
-                title=f"\x1b[32m>>> Complete turn <<<\x1b[0m\n{Match().display_matches_choice(self.turn)}",
+                title=f"\x1b[32m♟️ Complete turn ♟️\x1b[0m{Match().display_matches_choice(self.turn)}",
             )
             if register == "y":
                 self.turn.stop_turn()

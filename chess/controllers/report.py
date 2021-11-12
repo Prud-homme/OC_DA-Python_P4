@@ -48,12 +48,14 @@ def launch_report() -> None:
         if choice == "1":
             sort_field = handler[choice]()
             if sort_field is not None:
+                clear_display()
                 message = Player().display_players(
                     Player().unserializing_players_list(PLAYERS_TABLE.table.all()), sort_field=sort_field
                 )
                 display_message(message)
                 pause()
         elif choice == "2":
+            clear_display()
             display_message(handler[choice]())
             pause()
         elif choice == "3":
@@ -80,26 +82,26 @@ def select_tournament() -> Optional[Tournament]:
     The user can choose a tournament from the list found if it is not empty
     """
     clear_display()
-    display_message("\x1b[32m>>> Select a Tournament <<<\x1b[0m")
+    display_message("\x1b[32m♟️ Select a Tournament ♟️\x1b[0m")
     name = get_valid_entry(
         input_function=entry_request,
         message="\x1b[35mPress Enter to not filter by name.\x1b[0m\n> Enter a tournament name: ",
-        title="\x1b[32m>>> Load a Tournament <<<\x1b[0m",
+        title="\x1b[32m♟️ Load a Tournament ♟️\x1b[0m",
     )
     location = get_valid_entry(
         input_function=entry_request,
         message="\x1b[35mPress Enter to not filter by location.\x1b[0m\n> Enter a tournament location: ",
-        title="\x1b[32m>>> Load a Tournament <<<\x1b[0m",
+        title="\x1b[32m♟️ Load a Tournament ♟️\x1b[0m",
     )
     results = TOURNAMENTS_TABLE.search_by_name_and_location(name, location)
-    clear_display()
-    display_message("\x1b[32m>>> Select a Tournament <<<\x1b[0m")
+    
     if results is not None and len(results) != 0:
 
         message = f"\x1b[35mNumber of tournament found: {len(results)}\x1b[0m\n0: Cancel load"
         i = 1
         for result in results:
-            message += f'\n{i}: {result["name"]}, {result["location"]}, {result["date"]}'
+            message += f"""\n{i}: {result["name"]}, {result["location"]},
+    {" and ".join([f"{key} on {value}" for key, value in result["date"].items()])}"""
             i += 1
         message += "\n\x1b[32m> Select a tournament: \x1b[0m"
         tournament_selected = get_valid_entry(
@@ -107,7 +109,7 @@ def select_tournament() -> Optional[Tournament]:
             message=message,
             check_functions=[entry_is_integer_under_max_value],
             max_value=len(results),
-            title="\x1b[32m>>> Load a Tournament <<<\x1b[0m",
+            title="\x1b[32m♟️ Load a Tournament ♟️\x1b[0m",
         )
         if tournament_selected == "0":
             logger.info("cancel ok")
@@ -155,5 +157,6 @@ def report_tournament() -> None:
             message = handler[choice]()
 
         if message is not None:
+            clear_display()
             display_message(message)
             pause()

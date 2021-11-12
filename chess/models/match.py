@@ -185,7 +185,7 @@ impossible to unserialized a match and return the unserialized match list."""
         Create and return a printable menu to select a match
         via its associated number.
         """
-        message = f"\n\x1b[32m♟️ {turn.name} ♟️\x1b[0m"
+        message = f"\x1b[32m♟️ {turn.name} ♟️\x1b[0m"
         cpt = 1
         for match in turn.matches:
             message += f"\n{cpt}: {match.__str__()}"

@@ -195,9 +195,9 @@ ranking={self.ranking})""".replace(
         """
         sort_field: str = kwargs.get("sort_field", None)
         if len(players_list) == 0:
-            return f"\n\x1b[32m♟️ No player is defined ♟️\x1b[0m"
+            return f"\x1b[32m♟️ No player is defined ♟️\x1b[0m"
 
-        message = "\n\x1b[32m♟️ List of players ♟️\x1b[0m"
+        message = "\x1b[32m♟️ List of players ♟️\x1b[0m"
         if sort_field is not None:
             zipped = zip([player.serializing()[sort_field] for player in players_list], range(len(players_list)))
             unsorted_list = list(zipped)

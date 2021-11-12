@@ -273,8 +273,8 @@ players_number={self.players_number})""".replace(
         """
         tournaments_list = [Tournament(**serial_data) for serial_data in TOURNAMENTS_TABLE.table.all()]
         if len(tournaments_list) == 0:
-            return f"\n\x1b[32m♟️ No tournaments is defined ♟️\x1b[0m"
-        message = f"\n\x1b[32m♟️ List of tournaments ♟️\x1b[0m"
+            return f"\x1b[32m♟️ No tournaments is defined ♟️\x1b[0m"
+        message = f"\x1b[32m♟️ List of tournaments ♟️\x1b[0m"
         for tournament in tournaments_list:
             message += f"\n\x1b[32m[Tournament]\x1b[0m {tournament.name}\n{tournament.__str__()}"
         return message
@@ -285,10 +285,10 @@ players_number={self.players_number})""".replace(
         containing the information given by the a Match method of each match
         """
         if len(self.turns) == 0:
-            return f"\n\x1b[32m♟️ No match is defined ♟️\x1b[0m"
-        message = f"\n\x1b[32m♟️ List of matches ♟️\x1b[0m"
+            return f"\x1b[32m♟️ No match is defined ♟️\x1b[0m"
+        message = f"\x1b[32m♟️ List of matches ♟️\x1b[0m"
         for turn in self.turns:
-            message += Match().display_matches_choice(turn)
+            message += f"\n{Match().display_matches_choice(turn)}"
         return message
 
     def display_turns_without_match(self) -> str:
@@ -297,8 +297,8 @@ players_number={self.players_number})""".replace(
         containing the information given by the __str__ method of each turn
         """
         if len(self.turns) == 0:
-            return f"\n\x1b[32m♟️ No turn is defined ♟️\x1b[0m"
-        message = f"\n\x1b[32m♟️ List of turns ♟️\x1b[0m"
+            return f"\x1b[32m♟️ No turn is defined ♟️\x1b[0m"
+        message = f"\x1b[32m♟️ List of turns ♟️\x1b[0m"
         for turn in self.turns:
             message += f"\n\x1b[32m[Turn]\x1b[0m {turn.__str__()}"
         return message
@@ -313,7 +313,7 @@ players_number={self.players_number})""".replace(
             autopause()
             return None
 
-        message = f"\n\x1b[32m♟️ Tournament - Final ranking ♟️\x1b[0m"
+        message = f"\x1b[32m♟️ Tournament - Final ranking ♟️\x1b[0m"
 
         scores = self.load_scores()
         zipped = zip(scores, range(len(scores)))
