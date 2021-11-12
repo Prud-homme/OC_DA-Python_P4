@@ -36,27 +36,23 @@ About this program :
   ```
 </details>
 
-#### On Windows
-If you configured the PATH and PATHEXT variables for your Python installation, run:
-```
-$ python -m venv c:\path\to\myenv
-```
+<details>
+  <summary>On Unix or MacOS</summary>
+  
+  ```
+  $ python3 -m venv /path/to/myenv
 
-Alternatively:
-```
-$ c:\path\of\python\installation\python -m venv c:\path\to\myenv
-```
-For example: 
-```
-$ c:\Python\Python38\python -m venv c:\path\to\myenv
-$ myenv\Scripts\activate.bat
-(myenv) $ pip3 install -r requirements.txt
-```
+  $ source myenv/bin/activate
 
-To disable the virtual environment, run:
-```
-(myenv) $ deactivate
-```
+  (myenv) $ pip3 install -r requirements.txt
+  ```
+
+  To disable the virtual environment, run:
+  ```
+  (myenv) $ deactivate
+  ```
+</details>
+
 #### On Unix or MacOS
 ```
 $ python3 -m venv /path/to/myenv
