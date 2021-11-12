@@ -1,5 +1,18 @@
 # Chess tournament management - Swiss system
+
+## Menu
+
+* [Overview](#overview)
+* [Program setup](#program-setup)
+	- [Overview](#creation-of-a-virtual-environment)
+* [Program execution](#program-execution)
+* [Flake8](#flake8)
+* [Screenshot](#screenshot)
+	- [Tournament menu](#tournament-menu)
+	- [Reports](#reports)
+
 ## Overview
+
 About this program :
 - it allows to manage chess tournaments according to the Swiss system
 - it allows to manage the rating of registered players 
@@ -9,49 +22,32 @@ About this program :
 ![Screenshot of menu](https://github.com/Prud-homme/image-data-bank/blob/main/projet_4/menu.gif?raw=true)
 
 [Link to screenshot](#screenshot)
+
 ## Program setup
+
 ### Creation of a virtual environment
-<details>
-  <summary>On Windows</summary>
-  
-  If you configured the PATH and PATHEXT variables for your Python installation, run:
-  ```
-  $ python -m venv c:\path\to\myenv
-  ```
 
-  Alternatively:
-  ```
-  $ c:\path\of\python\installation\python -m venv c:\path\to\myenv
-  ```
-  For example: 
-  ```
-  $ c:\Python\Python38\python -m venv c:\path\to\myenv
-  $ myenv\Scripts\activate.bat
-  (myenv) $ pip3 install -r requirements.txt
-  ```
+**On Windows**
+```
+$ python3 -m venv c:\path\to\myenv
+$ myenv\Scripts\activate.bat
+```
 
-  To disable the virtual environment, run:
-  ```
-  (myenv) $ deactivate
-  ```
-</details>
+**On Unix or MacOS**
+```
+$ python3 -m venv /path/to/myenv
+$ source myenv/bin/activate
+```
 
-<details>
-  <summary>On Unix or MacOS</summary>
-  
-  ```
-  $ python3 -m venv /path/to/myenv
+**To install packages from the requirements.txt file**
+```
+(myenv) $ pip3 install -r requirements.txt
+```
 
-  $ source myenv/bin/activate
-
-  (myenv) $ pip3 install -r requirements.txt
-  ```
-
-  To disable the virtual environment, run:
-  ```
-  (myenv) $ deactivate
-  ```
-</details>
+**To disable the virtual environment, run:**
+```
+(myenv) $ deactivate
+```
 
 ## Program execution
 When the virtual environment is activated and you are placed in the folder where the main file is located, launch the program with the command:
