@@ -45,7 +45,7 @@ def search_player() -> Optional[Player]:
     results = PLAYERS_TABLE.search_by_first_and_last_name(firstname, lastname)
 
     message = Player().display_players_choice(results)
-    if message != None:
+    if message is not None:
         player_selected = get_valid_entry(
             input_function=entry_request,
             message=message,
@@ -178,7 +178,7 @@ def edit_player_ranking() -> None:
     The user enters the new ranking and the user is updated in the database
     """
     player = search_player()
-    if player == None:
+    if player is None:
         logger.info("No player selected")
         autopause()
         return None

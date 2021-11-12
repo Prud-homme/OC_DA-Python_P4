@@ -61,7 +61,7 @@ class Match:
                 logger.error("Match not well defined: the first player must be a player instance.")
                 well_defined = False
 
-            if type(score1) not in (float, int) and score1 != None:
+            if type(score1) not in (float, int) and score1 is not None:
                 logger.error(
                     """Match not well defined:
 the first score must be a float or int or defined as None."""
@@ -72,7 +72,7 @@ the first score must be a float or int or defined as None."""
                 logger.error("Match not well defined: the second player must be a player instance.")
                 well_defined = False
 
-            if type(score2) not in (float, int) and score2 != None:
+            if type(score2) not in (float, int) and score2 is not None:
                 logger.error(
                     """Match not well defined:
 the second score must be a float or int or defined as None"""

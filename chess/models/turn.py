@@ -62,7 +62,7 @@ matches={self.matches})""".replace(
 
     def display(self) -> str:
         """Return a string containing a printable description of the object"""
-        if self.name != None:
+        if self.name is not None:
             message = f"\n{self.__str__()}"
 
             if len(self.matches) > 0:
@@ -119,10 +119,10 @@ matches={self.matches})""".replace(
         scores = kwargs.get("scores", None)
 
         players_index = [*range(len(players))]
-        if scores != None and len(players) == len(scores) and len(players) % 2 == 0:
+        if scores is not None and len(players) == len(scores) and len(players) % 2 == 0:
             sort_scores, sort_index = zip(*sorted(zip(scores, players_index), reverse=True))
 
-        elif rankings != None and len(players) == len(rankings) and len(players) % 2 == 0:
+        elif rankings is not None and len(players) == len(rankings) and len(players) % 2 == 0:
             sort_rankings, sort_index = zip(*sorted(zip(rankings, players_index), reverse=False))
 
         else:
@@ -239,7 +239,7 @@ matches={self.matches})""".replace(
                 turns_list,
                 pair_players_matches,
             )
-            if result == None:
+            if result is None:
                 return None
 
             pair_players_matches, j = result

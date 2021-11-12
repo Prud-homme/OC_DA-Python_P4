@@ -36,7 +36,7 @@ def entry_is_integer_under_max_value(entry: str, **kwargs) -> bool:
     """
     max_value: int = kwargs.get("max_value", None)
 
-    if max_value == None:
+    if max_value is None:
         if entry.isdecimal() and int(entry) >= 0:
             return True
         else:
@@ -53,9 +53,9 @@ def entry_is_integer_under_max_value(entry: str, **kwargs) -> bool:
 def entry_belongs_list(entry: str, **kwargs) -> bool:
     """Check if the user has entered a value in the list provided"""
     allowed_list: list = kwargs.get("allowed_list", None)
-    if allowed_list == None:
+    if allowed_list is None:
         return True
-    if allowed_list == None or entry.lower() in allowed_list or entry.upper() in allowed_list:
+    if allowed_list is None or entry.lower() in allowed_list or entry.upper() in allowed_list:
         return True
     else:
         logger.error(f"""Entry is not in {' '.join(allowed_list)}""")
@@ -101,7 +101,7 @@ def entry_is_valid_date(entry: str, **kwargs) -> bool:
 
 def entry_is_valid(entry: Optional[str], **kwargs) -> bool:
     """Check if the user has entered a value that meets each test criteria"""
-    if entry == None:
+    if entry is None:
         return False
 
     check_functions: Callable = kwargs.get("check_functions", [])
@@ -111,7 +111,7 @@ def entry_is_valid(entry: Optional[str], **kwargs) -> bool:
         if not function(entry=entry, **kwargs):
             pause()
             clear_display()
-            if title != None:
+            if title is not None:
                 display_message(title)
             return False
     return True
@@ -123,6 +123,6 @@ def get_valid_entry(input_function: Callable[[str], str], message: str, **kwargs
     entry = None
     while not entry_is_valid(entry, **kwargs):
         entry = input_function(message)
-        if entry == "" and default_value != None:
+        if entry == "" and default_value is not None:
             return default_value
     return entry

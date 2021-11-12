@@ -50,7 +50,7 @@ class Table:
     def get_id(self, serial_data: dict) -> Optional[int]:
         """Get the id of an element in the table thanks to its serialized data"""
         item = self.table.get(Query().fragment(serial_data))
-        if item != None:
+        if item is not None:
             return item.doc_id
         else:
             return None
@@ -62,7 +62,7 @@ class Table:
     def exist_serial_data(self, serial_data: dict) -> bool:
         """Gives the existence of a item in the table thanks to its serialized data"""
         ##breakpoint()
-        if self.search_items(serial_data) != None:
+        if self.search_items(serial_data) is not None:
             return True
         return None
         # return len(self.search_items(serial_data)) > 0

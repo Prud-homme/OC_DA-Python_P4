@@ -47,7 +47,7 @@ def launch_report() -> None:
         choice = display_menu_report()
         if choice == "1":
             sort_field = handler[choice]()
-            if sort_field != None:
+            if sort_field is not None:
                 message = Player().display_players(
                     Player().unserializing_players_list(PLAYERS_TABLE.table.all()), sort_field=sort_field
                 )
@@ -94,7 +94,7 @@ def select_tournament() -> Optional[Tournament]:
     results = TOURNAMENTS_TABLE.search_by_name_and_location(name, location)
     clear_display()
     display_message("\x1b[32m>>> Select a Tournament <<<\x1b[0m")
-    if results != None and len(results) != 0:
+    if results is not None and len(results) != 0:
 
         message = f"\x1b[35mNumber of tournament found: {len(results)}\x1b[0m\n0: Cancel load"
         i = 1
@@ -128,7 +128,7 @@ def report_tournament() -> None:
     """
     tournament = select_tournament()
 
-    if tournament == None:
+    if tournament is None:
         logger.info("No tournament selected")
         autopause()
         return None
@@ -149,11 +149,11 @@ def report_tournament() -> None:
 
         if choice == "1":
             sort_field = handler[choice]()
-            if sort_field != None:
+            if sort_field is not None:
                 message = Player().display_players(tournament.players, sort_field=sort_field)
         elif choice in ["2", "3", "4"]:
             message = handler[choice]()
 
-        if message != None:
+        if message is not None:
             display_message(message)
             pause()

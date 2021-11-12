@@ -215,7 +215,7 @@ players_number={self.players_number})""".replace(
         after serializing the tournament instance data
         """
         tournament_id = self.get_id_in_database()
-        if tournament_id != None:
+        if tournament_id is not None:
             TOURNAMENTS_TABLE.update_item(
                 self.serializing(),
                 tournament_id,
@@ -239,21 +239,21 @@ players_number={self.players_number})""".replace(
         clear_display()
         message = ""
         msg = self.display()
-        if msg == None:
+        if msg is None:
             logger.warning("Can not obtain tournament information")
             autopause()
         else:
             message += msg
 
         msg = Turn().display_turns(self.turns)
-        if msg == None:
+        if msg is None:
             logger.warning("Can not obtain turns information")
             autopause()
         else:
             message += msg
 
         msg = Player().display_players(self.players, sort_field="ranking")
-        if msg == None:
+        if msg is None:
             logger.warning("Can not obtain players information")
             autopause()
         else:

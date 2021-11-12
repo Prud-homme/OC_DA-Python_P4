@@ -146,7 +146,7 @@ ranking={self.ranking})""".replace(
         after serializing the player instance data
         """
         player_id = self.get_id_in_database()
-        if player_id != None:
+        if player_id is not None:
             PLAYERS_TABLE.update_item(self.serializing(), player_id)
             logger.info("Successful update.")
         else:

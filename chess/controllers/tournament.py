@@ -209,7 +209,7 @@ class TournamentController:
         results = TOURNAMENTS_TABLE.search_by_name_and_location(name, location)
         clear_display()
         display_message("\x1b[32m>>> Load a Tournament <<<\x1b[0m")
-        if results != None and len(results) != 0:
+        if results is not None and len(results) != 0:
 
             message = f"\x1b[35mNumber of tournament found: {len(results)}\x1b[0m\n0: Cancel load"
             i = 1
@@ -242,7 +242,7 @@ class TournamentController:
     def display_current_match(self, number: bool = False) -> None:
         """Displays the latest matches generated according to the Swiss system"""
         clear_display()
-        if self.turn == None:
+        if self.turn is None:
             print("No turn in memory")
             return None
         message = Match().display_matches_choice(self.turn)
@@ -255,7 +255,7 @@ class TournamentController:
         """
         clear_display()
         display_message("\x1b[32m♟️ New turn ♟️\x1b[0m")
-        if self.turn != None:
+        if self.turn is not None:
             logger.info("Turn in memory")
             autopause()
             return None
@@ -288,7 +288,7 @@ class TournamentController:
         """
         clear_display()
         display_message("\x1b[32m♟️ Complete match ♟️\x1b[0m")
-        if self.turn == None:
+        if self.turn is None:
             logger.info("No turn in memory")
             autopause()
             return None
@@ -337,7 +337,7 @@ class TournamentController:
         """
         clear_display()
         display_message("\x1b[32m♟️ Complete turn ♟️\x1b[0m")
-        if self.turn == None:
+        if self.turn is None:
             logger.info("No turn in memory")
             return None
         if not self.turn.all_matches_defined():
