@@ -1,15 +1,16 @@
 import os
 import sys
 from datetime import datetime
+from typing import Callable, Optional, Union
+
+from logger import logger
+from utils import clear_display, pause
+from views import display_message
 
 checkdir = os.path.dirname(os.path.realpath(__file__))
 controllersdir = os.path.dirname(checkdir)
 chessdir = os.path.dirname(controllersdir)
 sys.path.append(chessdir)
-from utils import pause, clear_display
-from logger import logger
-from views import display_message, entry_request
-from typing import Optional, Callable, Union
 
 
 def choice_is_valid(choice: str, handler: dict) -> bool:
@@ -55,7 +56,11 @@ def entry_belongs_list(entry: str, **kwargs) -> bool:
     allowed_list: list = kwargs.get("allowed_list", None)
     if allowed_list is None:
         return True
-    if allowed_list is None or entry.lower() in allowed_list or entry.upper() in allowed_list:
+    if (
+        allowed_list is None
+        or entry.lower() in allowed_list
+        or entry.upper() in allowed_list
+    ):
         return True
     else:
         logger.error(f"""Entry is not in {' '.join(allowed_list)}""")
@@ -117,7 +122,9 @@ def entry_is_valid(entry: Optional[str], **kwargs) -> bool:
     return True
 
 
-def get_valid_entry(input_function: Callable[[str], str], message: str, **kwargs) -> Union[str, int]:
+def get_valid_entry(
+    input_function: Callable[[str], str], message: str, **kwargs
+) -> Union[str, int]:
     """Requests an entry as long as it does not pass all the requested tests"""
     default_value: Union[int, str] = kwargs.get("default_value", None)
     entry = None

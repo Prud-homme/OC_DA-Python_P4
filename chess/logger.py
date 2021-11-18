@@ -1,10 +1,12 @@
 import argparse
 import logging
 
-
 parser = argparse.ArgumentParser()
 parser.add_argument(
-    "-log", "--loglevel", default="warning", help="Provide logging level. Example --loglevel debug, default=warning"
+    "-log",
+    "--loglevel",
+    default="warning",
+    help="Provide logging level. Example --loglevel debug, default=warning",
 )
 
 args = parser.parse_args()

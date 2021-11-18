@@ -1,11 +1,11 @@
 from chess import (
     TournamentController,
-    launch_report,
-    display_menu,
-    clear_display,
     choice_is_valid,
+    clear_display,
+    display_menu,
     display_message,
     edit_player_ranking,
+    launch_report,
 )
 
 

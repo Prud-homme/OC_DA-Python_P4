@@ -1,13 +1,17 @@
 from __future__ import annotations
-import sys
+
 import os
+import sys
+from typing import Optional, Union
+
+from __init__ import SerializedMatch, SerializedPlayer
+from logger import logger
+from models.player import Player
+from models.turn import Turn
 
 modelsdir = os.path.dirname(os.path.realpath(__file__))
 chessdir = os.path.dirname(modelsdir)
 sys.path.append(chessdir)
-from logger import logger
-from models.player import Player
-from typing import Optional, Union
 
 
 class Match:
@@ -18,9 +22,9 @@ class Match:
     """
 
     def __init__(self, **kwargs) -> None:
-        self.match: tuple[list[Union[Player, float], list[Union[Player, float]]]] = kwargs.get(
-            "match", ([None, None], [None, None])
-        )
+        self.match: tuple[
+            list[Union[Player, float], list[Union[Player, float]]]
+        ] = kwargs.get("match", ([None, None], [None, None]))
 
     def __str__(self) -> Optional[str]:
         if not self.is_well_defined():
@@ -58,7 +62,9 @@ class Match:
             [player1, score1], [player2, score2] = self.match
 
             if not type(player1) == Player:
-                logger.error("Match not well defined: the first player must be a player instance.")
+                logger.error(
+                    "Match not well defined: the first player must be a player instance."
+                )
                 well_defined = False
 
             if type(score1) not in (float, int) and score1 is not None:
@@ -69,7 +75,9 @@ the first score must be a float or int or defined as None."""
                 well_defined = False
 
             if not type(player2) == Player:
-                logger.error("Match not well defined: the second player must be a player instance.")
+                logger.error(
+                    "Match not well defined: the second player must be a player instance."
+                )
                 well_defined = False
 
             if type(score2) not in (float, int) and score2 is not None:
@@ -107,7 +115,9 @@ the second score must be a float or int or defined as None"""
         Returns the instance of each of the two players
         """
         if not self.is_well_defined():
-            logger.error("Match not well defined: impossible to return player instances")
+            logger.error(
+                "Match not well defined: impossible to return player instances"
+            )
             return None
         [player1, score1], [player2, score2] = self.match
         return player1, player2
@@ -119,7 +129,9 @@ the second score must be a float or int or defined as None"""
         score2 is the score of the second player (cf. second element of the tuple).
         """
         if not self.is_well_defined():
-            logger.error("Match not well defined: impossible to return player instances")
+            logger.error(
+                "Match not well defined: impossible to return player instances"
+            )
             return None
         self.match[0][1] = score1
         self.match[1][1] = score2
@@ -131,7 +143,9 @@ the second score must be a float or int or defined as None"""
         Returns the serialized instance of each of the two players.
         """
         if not self.is_well_defined():
-            logger.error("Match not well defined: impossible to return serialized player instances")
+            logger.error(
+                "Match not well defined: impossible to return serialized player instances"
+            )
             return None
         [player1, score1], [player2, score2] = self.match
         return player1.serializing(), player2.serializing()
@@ -145,7 +159,9 @@ the second score must be a float or int or defined as None"""
         serial_matches = []
         for match in matches:
             if type(match) != Match and not match.is_well_defined():
-                logger.error("Match not well defined: impossible to return the list of serialized matches")
+                logger.error(
+                    "Match not well defined: impossible to return the list of serialized matches"
+                )
                 return None
             serial_matches.append(match.serializing())
         return serial_matches
@@ -193,7 +209,9 @@ impossible to unserialized a match and return the unserialized match list."""
         return message
 
     @staticmethod
-    def match_already_registered(players_pair: tuple[Player, Player], matches_list: list[Match]) -> bool:
+    def match_already_registered(
+        players_pair: tuple[Player, Player], matches_list: list[Match]
+    ) -> bool:
         """Checks if the proposed match has been played previously or not"""
         for match in matches_list:
             [player1, score1], [player2, score2] = match.match

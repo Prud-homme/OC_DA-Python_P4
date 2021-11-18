@@ -1,5 +1,6 @@
 import re
 from typing import Optional
+
 from tinydb import Query, TinyDB
 
 
@@ -15,13 +16,9 @@ class Table:
         self.database = database
         self.table = TinyDB(database).table(table_name)
 
-    def create_item(self, serial_data: dict) -> bool:
+    def create_item(self, serial_data: dict) -> None:
         """Insertion of serialized data in the table"""
-        try:
-            self.table.insert(serial_data)
-            return True
-        except:
-            return False
+        self.table.insert(serial_data)
 
     def update_item(self, serial_data: dict, item_id: int) -> bool:
         """Update a table element with new serialized data"""
@@ -61,11 +58,9 @@ class Table:
 
     def exist_serial_data(self, serial_data: dict) -> bool:
         """Gives the existence of a item in the table thanks to its serialized data"""
-        ##breakpoint()
         if self.search_items(serial_data) is not None:
             return True
-        return None
-        # return len(self.search_items(serial_data)) > 0
+        return False
 
     def get_item_with_id(self, item_id: int) -> Optional[dict]:
         """Get the serialized data of an element of the table thanks to its id"""
@@ -74,16 +69,22 @@ class Table:
         else:
             return None
 
-    def search_by_first_and_last_name(self, firstname_searched: str, lastname_searched: str) -> Optional[list]:
+    def search_by_first_and_last_name(
+        self, firstname_searched: str, lastname_searched: str
+    ) -> Optional[list]:
         """Search by name (if the field exist) in the table"""
         result1 = []
         result2 = []
 
         if self.table.search(Query().firstname.exists()):
-            result1 = self.table.search(Query().firstname.search(firstname_searched, flags=re.IGNORECASE))
+            result1 = self.table.search(
+                Query().firstname.search(firstname_searched, flags=re.IGNORECASE)
+            )
 
         if self.table.search(Query().lastname.exists()):
-            result2 = self.table.search(Query().lastname.search(lastname_searched, flags=re.IGNORECASE))
+            result2 = self.table.search(
+                Query().lastname.search(lastname_searched, flags=re.IGNORECASE)
+            )
 
         if len(result1) > 0 and len(lastname_searched) == 0:  # len(result2) == 0:
             return result1
@@ -97,16 +98,22 @@ class Table:
         else:
             return None
 
-    def search_by_name_and_location(self, name_searched: str, location_searched: str) -> Optional[list]:
+    def search_by_name_and_location(
+        self, name_searched: str, location_searched: str
+    ) -> Optional[list]:
         """Search by name (if the field exist) in the table"""
         result1 = []
         result2 = []
 
         if self.table.search(Query().name.exists()):
-            result1 = self.table.search(Query().name.search(name_searched, flags=re.IGNORECASE))
+            result1 = self.table.search(
+                Query().name.search(name_searched, flags=re.IGNORECASE)
+            )
 
         if self.table.search(Query().location.exists()):
-            result2 = self.table.search(Query().location.search(location_searched, flags=re.IGNORECASE))
+            result2 = self.table.search(
+                Query().location.search(location_searched, flags=re.IGNORECASE)
+            )
 
         if len(result1) > 0 and len(result2) == 0:
             return result1

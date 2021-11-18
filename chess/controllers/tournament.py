@@ -1,33 +1,33 @@
 from __future__ import annotations
+
 import os
 import sys
 
-currentdir = os.path.dirname(os.path.realpath(__file__))
-chessdir = os.path.dirname(currentdir)
-sys.path.append(chessdir)
-from logger import logger
-from utils import clear_display, pause, autopause
+from controllers.checks import (
+    choice_is_valid,
+    entry_belongs_list,
+    entry_is_integer_under_max_value,
+    entry_is_not_empty,
+    entry_is_valid_datetime,
+    get_valid_entry,
+)
 from controllers.player import get_player
-from models import Match, Player, Tournament, Turn
-from settings import TOURNAMENTS_TABLE, TIME_CONTROL, DATABASE_PATH
+from logger import logger
+from models import Match, Tournament, Turn
+from settings import TIME_CONTROL, TOURNAMENTS_TABLE
+from utils import autopause, clear_display, pause
 from views import (
-    display_message,
-    entry_request,
     display_menu_tournament_complete,
     display_menu_tournament_lack_players,
     display_menu_tournament_main,
     display_menu_tournament_resume,
+    display_message,
+    entry_request,
 )
-from controllers.checks import (
-    get_valid_entry,
-    entry_is_valid,
-    entry_is_valid_date,
-    entry_is_valid_datetime,
-    entry_belongs_list,
-    entry_is_integer_under_max_value,
-    entry_is_not_empty,
-    choice_is_valid,
-)
+
+currentdir = os.path.dirname(os.path.realpath(__file__))
+chessdir = os.path.dirname(currentdir)
+sys.path.append(chessdir)
 
 
 class TournamentController:
@@ -92,7 +92,7 @@ class TournamentController:
 
         choice = get_valid_entry(
             input_function=entry_request,
-            message=f"> Enter a end date (y, n): ",
+            message="> Enter a end date (y, n): ",
             check_functions=[entry_belongs_list],
             allowed_list=["y", "n"],
             title=title,
@@ -167,7 +167,7 @@ class TournamentController:
                 self.tournament.add_player(player)
                 continue_add = get_valid_entry(
                     input_function=entry_request,
-                    message=f"> Want to add another player ? (y, n): ",
+                    message="> Want to add another player ? (y, n): ",
                     check_functions=[entry_belongs_list],
                     allowed_list=["y", "n"],
                 )
@@ -207,7 +207,7 @@ class TournamentController:
             title=title,
         )
         results = TOURNAMENTS_TABLE.search_by_name_and_location(name, location)
-        
+
         if results is not None and len(results) != 0:
 
             message = f"\x1b[35mNumber of tournament found: {len(results)}\x1b[0m\n0: Cancel load"
@@ -310,7 +310,9 @@ class TournamentController:
             autopause()
             return None
 
-        player = self.turn.matches[int(match_selected) - 1].get_players()[0]  # players_pair[0]
+        player = self.turn.matches[int(match_selected) - 1].get_players()[
+            0
+        ]  # players_pair[0]
         player_score = get_valid_entry(
             input_function=entry_request,
             message=f"> Enter a score for {' '.join((player.firstname, player.lastname))} (0, 1 or 0.5): ",
@@ -318,11 +320,13 @@ class TournamentController:
             allowed_list=["0", "1", "0.5"],
             title=self.turn.matches[int(match_selected) - 1].display(),
         )
-        self.turn.matches[int(match_selected) - 1].edit_scores(float(player_score), 1 - float(player_score))
+        self.turn.matches[int(match_selected) - 1].edit_scores(
+            float(player_score), 1 - float(player_score)
+        )
         display_message(self.turn.matches[int(match_selected) - 1].display())
         register = get_valid_entry(
             input_function=entry_request,
-            message=f"> Confirm match registration ? (y/n)\nAnswer : ",
+            message="> Confirm match registration ? (y/n)\nAnswer : ",
             check_functions=[entry_belongs_list],
             allowed_list=["y", "n"],
             title=self.turn.matches[int(match_selected) - 1].display(),
@@ -342,7 +346,9 @@ class TournamentController:
             return None
         if not self.turn.all_matches_defined():
             message = Match().display_matches_choice(self.turn)
-            display_message(f"{message}\n\x1b[32mPlease complete matches without scores\x1b[0m")
+            display_message(
+                f"{message}\n\x1b[32mPlease complete matches without scores\x1b[0m"
+            )
             pause()
 
         if self.turn.all_matches_defined():
@@ -351,7 +357,7 @@ class TournamentController:
             display_message(message)
             register = get_valid_entry(
                 input_function=entry_request,
-                message=f"> Confirm matches registration ? (y/n)\nAnswer : ",
+                message="> Confirm matches registration ? (y/n)\nAnswer : ",
                 check_functions=[entry_belongs_list],
                 allowed_list=["y", "n"],
                 title=f"\x1b[32m♟️ Complete turn ♟️\x1b[0m{Match().display_matches_choice(self.turn)}",
@@ -377,7 +383,9 @@ class TournamentController:
             "4": self.complete_match,
             "5": self.complete_turn,
         }
-        while choice != "0" and len(self.tournament.turns) != self.tournament.turns_number:
+        while (
+            choice != "0" and len(self.tournament.turns) != self.tournament.turns_number
+        ):
             clear_display()
             choice = display_menu_tournament_resume()
             if choice == "1":
@@ -408,7 +416,10 @@ class TournamentController:
             "1": self.tournament.display_all_info,
             "2": self.tournament_get_players,
         }
-        while choice != "0" and len(self.tournament.players) != self.tournament.players_number:
+        while (
+            choice != "0"
+            and len(self.tournament.players) != self.tournament.players_number
+        ):
             clear_display()
             choice = display_menu_tournament_lack_players()
             if choice == "1":
@@ -448,18 +459,23 @@ class TournamentController:
             logger.info("Can not resume with a undefined tournament")
             autopause()
             return None
-        choice = None
-        if self.tournament.all_players_defined() and len(self.tournament.turns) == self.tournament.turns_number:
-            choice = self.tournament_is_complete()
+        if (
+            self.tournament.all_players_defined()
+            and len(self.tournament.turns) == self.tournament.turns_number
+        ):
+            self.tournament_is_complete()
 
-        elif self.tournament.all_players_defined() and len(self.tournament.turns) != self.tournament.turns_number:
-            choice = self.valid_resume()
+        elif (
+            self.tournament.all_players_defined()
+            and len(self.tournament.turns) != self.tournament.turns_number
+        ):
+            self.valid_resume()
             self.save_tournament()
             len(self.tournament.turns) != self.tournament.turns_number
 
         elif not self.tournament.all_players_defined():
             logger.info("Need more players")
-            choice = self.lack_player()
+            self.lack_player()
             self.save_tournament()
         else:
             logger.info("Please create or load a tournament to access this menu")
@@ -469,7 +485,7 @@ class TournamentController:
         """Allows the user to register the tournament in the database"""
         answer = get_valid_entry(
             input_function=entry_request,
-            message=f"> Confirm want to save ? (y, n): ",
+            message="> Confirm want to save ? (y, n): ",
             check_functions=[entry_belongs_list],
             allowed_list=["y", "n"],
             title=title,

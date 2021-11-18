@@ -1,32 +1,29 @@
 from __future__ import annotations
+
 import os
 import sys
 from typing import Optional
 
-currentdir = os.path.dirname(os.path.realpath(__file__))
-chessdir = os.path.dirname(currentdir)
-sys.path.append(chessdir)
-from settings import PLAYERS_TABLE, TOURNAMENTS_TABLE
-from utils import clear_display, pause, autopause
-from logger import logger
 from controllers.checks import (
-    get_valid_entry,
-    entry_is_valid,
-    entry_is_valid_datetime,
-    entry_belongs_list,
-    entry_is_integer_under_max_value,
-    entry_is_not_empty,
     choice_is_valid,
+    entry_is_integer_under_max_value,
+    get_valid_entry,
 )
-from controllers.tournament import TournamentController
-from models import Match, Player, Tournament, Turn
+from logger import logger
+from models import Player, Tournament
+from settings import PLAYERS_TABLE, TOURNAMENTS_TABLE
+from utils import autopause, clear_display, pause
 from views import (
-    display_message,
-    entry_request,
     display_menu_report,
     display_menu_report_player_filter,
     display_menu_report_tournament,
+    display_message,
+    entry_request,
 )
+
+currentdir = os.path.dirname(os.path.realpath(__file__))
+chessdir = os.path.dirname(currentdir)
+sys.path.append(chessdir)
 
 
 def launch_report() -> None:
@@ -50,7 +47,8 @@ def launch_report() -> None:
             if sort_field is not None:
                 clear_display()
                 message = Player().display_players(
-                    Player().unserializing_players_list(PLAYERS_TABLE.table.all()), sort_field=sort_field
+                    Player().unserializing_players_list(PLAYERS_TABLE.table.all()),
+                    sort_field=sort_field,
                 )
                 display_message(message)
                 pause()
@@ -94,10 +92,12 @@ def select_tournament() -> Optional[Tournament]:
         title="\x1b[32m♟️ Load a Tournament ♟️\x1b[0m",
     )
     results = TOURNAMENTS_TABLE.search_by_name_and_location(name, location)
-    
+
     if results is not None and len(results) != 0:
 
-        message = f"\x1b[35mNumber of tournament found: {len(results)}\x1b[0m\n0: Cancel load"
+        message = (
+            f"\x1b[35mNumber of tournament found: {len(results)}\x1b[0m\n0: Cancel load"
+        )
         i = 1
         for result in results:
             message += f"""\n{i}: {result["name"]}, {result["location"]},
@@ -152,7 +152,9 @@ def report_tournament() -> None:
         if choice == "1":
             sort_field = handler[choice]()
             if sort_field is not None:
-                message = Player().display_players(tournament.players, sort_field=sort_field)
+                message = Player().display_players(
+                    tournament.players, sort_field=sort_field
+                )
         elif choice in ["2", "3", "4"]:
             message = handler[choice]()
 

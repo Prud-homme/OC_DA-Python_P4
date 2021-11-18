@@ -1,17 +1,20 @@
 from __future__ import annotations
+
 import os
 import sys
 from typing import Optional
 
+from __init__ import SerializedPartialTournament, SerializedTournament
+from logger import logger
+from models.match import Match
+from models.player import Player
+from models.turn import Turn
+from settings import ICONS, TOURNAMENTS_TABLE
+from utils import autopause, clear_display
+
 modelsdir = os.path.dirname(os.path.realpath(__file__))
 chessdir = os.path.dirname(modelsdir)
 sys.path.append(chessdir)
-from models.turn import Turn
-from models.player import Player
-from models.match import Match
-from logger import logger
-from settings import TOURNAMENTS_TABLE, ICONS
-from utils import clear_display, autopause
 
 
 class Tournament:
@@ -56,7 +59,9 @@ players_number={self.players_number})""".replace(
     def add_turn(self, turn: Turn) -> None:
         """Check if the provided parameter is a turn instance and, if true, add the turn to tournament"""
         if type(turn) != Turn:
-            logger.error("Operation cancelled: the provided parameter is not a turn instance")
+            logger.error(
+                "Operation cancelled: the provided parameter is not a turn instance"
+            )
             autopause()
         else:
             self.turns.append(turn)
@@ -66,10 +71,14 @@ players_number={self.players_number})""".replace(
     def add_player(self, new_player: Player) -> None:
         """Check if the provided parameter is a player instance and, if true, add the player to tournament"""
         if type(new_player) != Player:
-            logger.error("Operation cancelled: the provided parameter is not a player instance")
+            logger.error(
+                "Operation cancelled: the provided parameter is not a player instance"
+            )
             autopause()
 
-        elif new_player.serializing() not in [player.serializing() for player in self.players]:
+        elif new_player.serializing() not in [
+            player.serializing() for player in self.players
+        ]:
             self.players.append(new_player)
             logger.info("Success: the player has been added to the tournament")
             autopause()
@@ -160,7 +169,9 @@ players_number={self.players_number})""".replace(
         before checking his presence in the tournament database
         """
         if self.attributes_are_not_none():
-            return TOURNAMENTS_TABLE.exist_serial_data(self.serialised_information_for_research())
+            return TOURNAMENTS_TABLE.exist_serial_data(
+                self.serialised_information_for_research()
+            )
         return False
 
     def get_id_in_database(self) -> Optional[int]:
@@ -182,7 +193,9 @@ players_number={self.players_number})""".replace(
             logger.info("Successful insert.")
             autopause()
         else:
-            logger.error("Insertion impossible, the tournament already exists in the database.")
+            logger.error(
+                "Insertion impossible, the tournament already exists in the database."
+            )
 
     def load_from_database_with_id(self, tournament_id: int) -> None:
         """
@@ -222,14 +235,18 @@ players_number={self.players_number})""".replace(
             )
             logger.info("Successful update.")
         else:
-            logger.error("Update impossible, tournament does not exist in the database.")
+            logger.error(
+                "Update impossible, tournament does not exist in the database."
+            )
 
     def display(self) -> Optional[str]:
         """Return a string containing a printable description of the object"""
         if self.attributes_are_not_none():
             return f"\x1b[32m♟️ Tournament - Information ♟️\x1b[0m\n{self.__str__()}"
         else:
-            logger.error("The tournament is not correctly defined, try again after completing his information")
+            logger.error(
+                "The tournament is not correctly defined, try again after completing his information"
+            )
 
     def display_all_info(self) -> str:
         """
@@ -263,7 +280,9 @@ players_number={self.players_number})""".replace(
 
     def list_previous_matches(self) -> list[tuple[Player, Player]]:
         """Return the pairs of players of each match of the tournament in a list"""
-        return [match.get_serial_players() for turn in self.turns for match in turn.matches]
+        return [
+            match.get_serial_players() for turn in self.turns for match in turn.matches
+        ]
 
     @staticmethod
     def display_all_tournaments() -> str:
@@ -271,10 +290,12 @@ players_number={self.players_number})""".replace(
         Return a string containing a printable message
         contening description of each tournament in tournament database
         """
-        tournaments_list = [Tournament(**serial_data) for serial_data in TOURNAMENTS_TABLE.table.all()]
+        tournaments_list = [
+            Tournament(**serial_data) for serial_data in TOURNAMENTS_TABLE.table.all()
+        ]
         if len(tournaments_list) == 0:
-            return f"\x1b[32m♟️ No tournaments is defined ♟️\x1b[0m"
-        message = f"\x1b[32m♟️ List of tournaments ♟️\x1b[0m"
+            return "\x1b[32m♟️ No tournaments is defined ♟️\x1b[0m"
+        message = "\x1b[32m♟️ List of tournaments ♟️\x1b[0m"
         for tournament in tournaments_list:
             message += f"\n\x1b[32m[Tournament]\x1b[0m {tournament.name}\n{tournament.__str__()}"
         return message
@@ -285,8 +306,8 @@ players_number={self.players_number})""".replace(
         containing the information given by the a Match method of each match
         """
         if len(self.turns) == 0:
-            return f"\x1b[32m♟️ No match is defined ♟️\x1b[0m"
-        message = f"\x1b[32m♟️ List of matches ♟️\x1b[0m"
+            return "\x1b[32m♟️ No match is defined ♟️\x1b[0m"
+        message = "\x1b[32m♟️ List of matches ♟️\x1b[0m"
         for turn in self.turns:
             message += f"\n{Match().display_matches_choice(turn)}"
         return message
@@ -297,8 +318,8 @@ players_number={self.players_number})""".replace(
         containing the information given by the __str__ method of each turn
         """
         if len(self.turns) == 0:
-            return f"\x1b[32m♟️ No turn is defined ♟️\x1b[0m"
-        message = f"\x1b[32m♟️ List of turns ♟️\x1b[0m"
+            return "\x1b[32m♟️ No turn is defined ♟️\x1b[0m"
+        message = "\x1b[32m♟️ List of turns ♟️\x1b[0m"
         for turn in self.turns:
             message += f"\n\x1b[32m[Turn]\x1b[0m {turn.__str__()}"
         return message
@@ -313,7 +334,7 @@ players_number={self.players_number})""".replace(
             autopause()
             return None
 
-        message = f"\x1b[32m♟️ Tournament - Final ranking ♟️\x1b[0m"
+        message = "\x1b[32m♟️ Tournament - Final ranking ♟️\x1b[0m"
 
         scores = self.load_scores()
         zipped = zip(scores, range(len(scores)))
@@ -331,7 +352,9 @@ players_number={self.players_number})""".replace(
                 if nb < 3:
                     message += f"\n{ICONS[nb]} - {player.lastname} {player.firstname} with {score_max} point"
                 else:
-                    message += f"\n{player.lastname} {player.firstname} with {score_max}"
+                    message += (
+                        f"\n{player.lastname} {player.firstname} with {score_max}"
+                    )
 
             sort_score = [score for score in sort_score if score != score_max]
             sort_player = sort_player[nb_score:]

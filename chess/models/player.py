@@ -1,14 +1,17 @@
 from __future__ import annotations
+
 import os
 import sys
+from typing import Any, Optional
+
+from __init__ import SerializedPartialPlayer, SerializedPlayer
+from logger import logger
+from settings import PLAYERS_TABLE
+from utils import autopause, pause
 
 modelsdir = os.path.dirname(os.path.realpath(__file__))
 chessdir = os.path.dirname(modelsdir)
 sys.path.append(chessdir)
-from settings import PLAYERS_TABLE
-from logger import logger
-from utils import pause, autopause
-from typing import Optional
 
 
 class Player:
@@ -112,7 +115,9 @@ ranking={self.ranking})""".replace(
             logger.info("Success: the player has been added to the database.")
             autopause()
         else:
-            logger.error("Insertion impossible, the player already exists in the database.")
+            logger.error(
+                "Insertion impossible, the player already exists in the database."
+            )
             pause()
 
     def load_from_database_with_id(self, player_id: int) -> None:
@@ -128,7 +133,9 @@ ranking={self.ranking})""".replace(
             logger.error("Load impossible, player does not exist in the database.")
             pause()
 
-    def load_from_database_with_serial_data(self, serial_player: SerializedPlayer) -> None:
+    def load_from_database_with_serial_data(
+        self, serial_player: SerializedPlayer
+    ) -> None:
         """
         Checks if the serialized data of the player exists in the player database
         before transforming its serialized data into a player instance
@@ -158,7 +165,9 @@ ranking={self.ranking})""".replace(
         if self.attributes_are_not_none():
             return f"\n{self.__str__()}"
         else:
-            logger.error("The player is not correctly defined, try again after completing his information")
+            logger.error(
+                "The player is not correctly defined, try again after completing his information"
+            )
             pause()
 
     def player_not_in_list(self, players_list: list[Player]) -> bool:
@@ -195,11 +204,14 @@ ranking={self.ranking})""".replace(
         """
         sort_field: str = kwargs.get("sort_field", None)
         if len(players_list) == 0:
-            return f"\x1b[32m♟️ No player is defined ♟️\x1b[0m"
+            return "\x1b[32m♟️ No player is defined ♟️\x1b[0m"
 
         message = "\x1b[32m♟️ List of players ♟️\x1b[0m"
         if sort_field is not None:
-            zipped = zip([player.serializing()[sort_field] for player in players_list], range(len(players_list)))
+            zipped = zip(
+                [player.serializing()[sort_field] for player in players_list],
+                range(len(players_list)),
+            )
             unsorted_list = list(zipped)
             sorted_list = sorted(unsorted_list)
             sort_value, sort_index = zip(*sorted_list)
@@ -217,12 +229,11 @@ ranking={self.ranking})""".replace(
         try:
             return (
                 len(elt) == 5
-                and type(elt["firstname"])
-                == type(elt["lastname"])
-                == type(elt["birthdate"])
-                == type(elt["gender"])
-                == str
-                and type(elt["ranking"]) == int
+                and isinstance(elt["firstname"], str)
+                and isinstance(elt["lastname"], str)
+                and isinstance(elt["birthdate"], str)
+                and isinstance(elt["gender"], str)
+                and isinstance(elt["ranking"], int)
             )
         except Exception as e:
             logger.error(e)

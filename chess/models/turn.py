@@ -1,15 +1,21 @@
 from __future__ import annotations
+
 import operator
+import os
+import sys
 from datetime import datetime
-import sys, os
+from typing import Optional
+
+from logger import logger
+from models.match import Match
+from models.player import Player
+from utils import pause
+
+from .__init__ import SerializedTurn
 
 modelsdir = os.path.dirname(os.path.realpath(__file__))
 chessdir = os.path.dirname(modelsdir)
 sys.path.append(chessdir)
-from models.match import Match
-from utils import pause
-from logger import logger
-from typing import Optional
 
 
 class Turn:
@@ -53,7 +59,9 @@ matches={self.matches})""".replace(
             "matches": Match().serializing_matches(self.matches),
         }
 
-    def unserializing(self, serial_turn: SerializedTurn, unserial_matches: list[Match]) -> None:
+    def unserializing(
+        self, serial_turn: SerializedTurn, unserial_matches: list[Match]
+    ) -> None:
         """Transform the serialized data of a turn into a turn instance"""
         self.name = serial_turn["name"]
         self.start_date = serial_turn["start_date"]
@@ -73,7 +81,9 @@ matches={self.matches})""".replace(
             return message
 
         else:
-            logger.error("The turn is not correctly defined, try again after completing his information")
+            logger.error(
+                "The turn is not correctly defined, try again after completing his information"
+            )
             pause()
 
     @staticmethod
@@ -120,10 +130,18 @@ matches={self.matches})""".replace(
 
         players_index = [*range(len(players))]
         if scores is not None and len(players) == len(scores) and len(players) % 2 == 0:
-            sort_scores, sort_index = zip(*sorted(zip(scores, players_index), reverse=True))
+            sort_scores, sort_index = zip(
+                *sorted(zip(scores, players_index), reverse=True)
+            )
 
-        elif rankings is not None and len(players) == len(rankings) and len(players) % 2 == 0:
-            sort_rankings, sort_index = zip(*sorted(zip(rankings, players_index), reverse=False))
+        elif (
+            rankings is not None
+            and len(players) == len(rankings)
+            and len(players) % 2 == 0
+        ):
+            sort_rankings, sort_index = zip(
+                *sorted(zip(rankings, players_index), reverse=False)
+            )
 
         else:
             return None
@@ -131,10 +149,17 @@ matches={self.matches})""".replace(
         return operator.itemgetter(*sort_index)(players)
 
     @staticmethod
-    def pair_not_in_previous_matches(turns_list: list[Turn], pair_players: list[tuple[Player, Player]]) -> bool:
+    def pair_not_in_previous_matches(
+        turns_list: list[Turn], pair_players: list[tuple[Player, Player]]
+    ) -> bool:
         """Check if the players have not already played against each other"""
-        previous_matches = [match.get_serial_players() for turn in turns_list for match in turn.matches]
-        return (pair_players[0].serializing(), pair_players[1].serializing(),) not in previous_matches and (
+        previous_matches = [
+            match.get_serial_players() for turn in turns_list for match in turn.matches
+        ]
+        return (
+            pair_players[0].serializing(),
+            pair_players[1].serializing(),
+        ) not in previous_matches and (
             pair_players[1].serializing(),
             pair_players[0].serializing(),
         ) not in previous_matches
@@ -154,7 +179,10 @@ matches={self.matches})""".replace(
         for i in top_index:
             for j in [player for player in bottom_index if player not in player_paired]:
                 pair_players = (top_players_list[i], bottom_players_list[j])
-                if Turn().pair_not_in_previous_matches(turns_list, pair_players) or len(players) == 2:
+                if (
+                    Turn().pair_not_in_previous_matches(turns_list, pair_players)
+                    or len(players) == 2
+                ):
                     pair_players_matches.append(
                         Match(
                             match=(
@@ -187,13 +215,20 @@ matches={self.matches})""".replace(
         to test new possibilities by making sure to respect the Swiss system
         as much as possible
         """
-        if len(pair_players_matches) != nb_matches and j == bottom_index[-1] and position_bottom < nb_matches - 1:
+        if (
+            len(pair_players_matches) != nb_matches
+            and j == bottom_index[-1]
+            and position_bottom < nb_matches - 1
+        ):
             position_bottom += 1
             pair_players_matches, player_paired = [], []
             bottom_index = list(range(nb_matches))
             bottom_index.insert(0, bottom_index.pop(position_bottom))
 
-        elif len(pair_players_matches) != nb_matches and position_bottom == nb_matches - 1:
+        elif (
+            len(pair_players_matches) != nb_matches
+            and position_bottom == nb_matches - 1
+        ):
             position_top += 1
             position_bottom = 0
             pair_players_matches, player_paired = [], []
@@ -209,7 +244,9 @@ matches={self.matches})""".replace(
         )
 
     @staticmethod
-    def generate_pairs_swiss_system(players: list[Player], **kwargs) -> Optional[list[Match]]:
+    def generate_pairs_swiss_system(
+        players: list[Player], **kwargs
+    ) -> Optional[list[Match]]:
         """
         Use methods sort_players_swiss_system(), pairing_swiss_system()
         and pairing_failed_swiss_system() to generate the match list
@@ -284,12 +321,12 @@ matches={self.matches})""".replace(
         containing the information given by the __str__ method of each turn
         """
         if len(turns_list) > 0:
-            message = f"\x1b[32m♟️ List of turns ♟️\x1b[0m"
+            message = "\x1b[32m♟️ List of turns ♟️\x1b[0m"
             for turn in turns_list:
                 message += turn.__str__()
             return message
         else:
-            return f"\x1b[32m♟️ No turn is defined ♟️\x1b[0m"
+            return "\x1b[32m♟️ No turn is defined ♟️\x1b[0m"
 
     def all_matches_defined(self) -> bool:
         """Checks if the list of matches of the instance does not contain undefined data"""

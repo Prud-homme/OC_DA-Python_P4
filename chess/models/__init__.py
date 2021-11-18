@@ -1,5 +1,7 @@
 from __future__ import annotations
+
 from typing import TypedDict, Union
+
 from .match import Match
 from .player import Player
 from .tournament import Tournament
@@ -22,7 +24,9 @@ class SerializedPartialPlayer(TypedDict):
 
 
 class SerializedMatch(TypedDict):
-    match: tuple[list[Union[SerializedPlayer, float], list[Union[SerializedPlayer, float]]]]
+    match: tuple[
+        list[Union[SerializedPlayer, float], list[Union[SerializedPlayer, float]]]
+    ]
 
 
 class SerializedTurn(TypedDict):

@@ -1,25 +1,26 @@
 from __future__ import annotations
+
 import os
 import sys
 from typing import Optional
 
-controllersdir = os.path.dirname(os.path.realpath(__file__))
-chessdir = os.path.dirname(controllersdir)
-sys.path.append(chessdir)
 from controllers.checks import (
-    get_valid_entry,
-    entry_is_valid,
-    entry_is_valid_date,
+    choice_is_valid,
     entry_belongs_list,
     entry_is_integer_under_max_value,
     entry_is_not_empty,
-    choice_is_valid,
+    entry_is_valid_date,
+    get_valid_entry,
 )
 from logger import logger
 from models import Player
 from settings import PLAYERS_TABLE
-from utils import autopause, clear_display, pause
-from views import display_message, entry_request, display_menu_add_player
+from utils import autopause, clear_display
+from views import display_menu_add_player, display_message, entry_request
+
+controllersdir = os.path.dirname(os.path.realpath(__file__))
+chessdir = os.path.dirname(controllersdir)
+sys.path.append(chessdir)
 
 
 def search_player() -> Optional[Player]:
@@ -105,7 +106,7 @@ def create_player_gender(title: str) -> str:
     """Requests the entry of the player's gender for the creation of a player"""
     gender = get_valid_entry(
         input_function=entry_request,
-        message=f"> Enter a gender (M/F): ",
+        message="> Enter a gender (M/F): ",
         check_functions=[entry_belongs_list],
         allowed_list=["M", "F"],
         title=title,

@@ -1,6 +1,6 @@
 def display_menu_report() -> str:
     """Display the report menu and return the choice"""
-    menu = f"""\x1b[32m♟️ Report and statistics ♟️\x1b[0m
+    menu = """\x1b[32m♟️ Report and statistics ♟️\x1b[0m
 1: List of all players
 2: List of all tournaments
 3: About a tournament
@@ -21,7 +21,7 @@ def display_menu_report_player_filter() -> str:
 
 def display_menu_report_tournament() -> str:
     """Display the menu for a specific tournament and return the choice"""
-    menu = f"""\x1b[32m♟️ Report and statistics - Tournament ♟️\x1b[0m
+    menu = """\x1b[32m♟️ Report and statistics - Tournament ♟️\x1b[0m
 1: List of all player
 2: List of all turns
 3: List of all matchs
