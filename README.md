@@ -55,7 +55,7 @@ When the virtual environment is activated and you are placed in the folder where
 ```
 (myenv) $ python3 main.py
 ```
-🗒️ Note: Depending on the installation of python it is possible that the `python3` command is not recognized under windows. In this case, you will have to replace `python3` by `python`.
+🗒️ *Note: Depending on the installation of python it is possible that the `python3` command is not recognized under windows. In this case, you will have to replace `python3` by `python`.*
 
 In order to get more information during the execution of the program you can run the command:
 ```
@@ -69,7 +69,7 @@ The .flake8 file allows to configure flake8 and thus it will be enough to launch
 
 ## Screenshot
 
-ℹ️ Use Ctrl + Click for open in new tab
+*ℹ️ Use Ctrl + Click for open in new tab*
 
 ### Tournament menu
 
