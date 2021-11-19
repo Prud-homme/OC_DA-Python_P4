@@ -13,10 +13,10 @@
 ## Overview
 
 About this program :
-- it allows to manage chess tournaments according to the Swiss system
-- it allows to manage the rating of registered players 
-- it allows to display different reports (list of players in the database or in a tournament, list of tournaments in the database,...)
-- it uses a json database to store tournaments and players
+* it allows to manage chess tournaments according to the Swiss system
+* it allows to manage the rating of registered players 
+* it allows to display different reports (list of players in the database or in a tournament, list of tournaments in the database,...)
+* it uses a json database to store tournaments and players
 
 ![Screenshot of menu](https://github.com/Prud-homme/image-data-bank/blob/main/projet_4/menu.gif?raw=true)
 
@@ -58,14 +58,14 @@ When the virtual environment is activated and you are placed in the folder where
 
 ### Options
 
-In order to get more information during the execution of the program you can run the command:
+* In order to get more information during the execution of the program you can run the command:
 ```
 (myenv) $ python3 main.py --loglevel info
 ```
 This information is for example: the success of adding a player to a tournament, the registration of a tournament in the database or the confirmation that a tournament has the right number of players or rounds.
 
 
-To display a brief documentation on how to invoke the program you can run the command:
+* To display a brief documentation on how to invoke the program you can run the command:
 ```
 (myenv) $ python3 main.py --help
 ```
