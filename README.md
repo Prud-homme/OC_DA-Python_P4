@@ -96,20 +96,20 @@ The .flake8 file allows to configure flake8 and thus it will be enough to launch
 
 ### Reports
 
-[List all players by alph](https://github.com/Prud-homme/image-data-bank/blob/main/projet_4/tournament-menu/playeralphabetic.png?raw=true)
+[List all players by alph](https://github.com/Prud-homme/image-data-bank/blob/main/projet_4/reports-statisticsu/playeralphabetic.png?raw=true)
 
-[List all tournaments](https://github.com/Prud-homme/image-data-bank/blob/main/projet_4/tournament-menu/listtournaments.png?raw=true)
+[List all tournaments](https://github.com/Prud-homme/image-data-bank/blob/main/projet_4/reports-statistics/listtournaments.png?raw=true)
 
-[Selecting a tournament to access these reports](https://github.com/Prud-homme/image-data-bank/blob/main/projet_4/tournament-menu/abouttournament.png?raw=true)
+[Selecting a tournament to access these reports](https://github.com/Prud-homme/image-data-bank/blob/main/projet_4/reports-statistics/abouttournament.png?raw=true)
 
-[Report menu for a tournament selected](https://github.com/Prud-homme/image-data-bank/blob/main/projet_4/tournament-menu/abouttournamentmenu.png?raw=true)
+[Report menu for a tournament selected](https://github.com/Prud-homme/image-data-bank/blob/main/projet_4/reports-statistics/abouttournamentmenu.png?raw=true)
 
-[Final ranking](https://github.com/Prud-homme/image-data-bank/blob/main/projet_4/tournament-menu/abouttournamentfinalranking.png?raw=true)
+[Final ranking](https://github.com/Prud-homme/image-data-bank/blob/main/projet_4/reports-statistics/abouttournamentfinalranking.png?raw=true)
 
-[List of matches](https://github.com/Prud-homme/image-data-bank/blob/main/projet_4/tournament-menu/abouttournamentmatches.png?raw=true)
+[List of matches](https://github.com/Prud-homme/image-data-bank/blob/main/projet_4/reports-statistics/abouttournamentmatches.png?raw=true)
 
-[List of rounds](https://github.com/Prud-homme/image-data-bank/blob/main/projet_4/tournament-menu/abouttournamentturn.png?raw=true)
+[List of rounds](https://github.com/Prud-homme/image-data-bank/blob/main/projet_4/reports-statistics/abouttournamentturn.png?raw=true)
 
-[Filtering player](https://github.com/Prud-homme/image-data-bank/blob/main/projet_4/tournament-menu/filterplayer.png?raw=true)
+[Filtering player](https://github.com/Prud-homme/image-data-bank/blob/main/projet_4/reports-statistics/filterplayer.png?raw=true)
 
 
