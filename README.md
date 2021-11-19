@@ -96,7 +96,7 @@ The .flake8 file allows to configure flake8 and thus it will be enough to launch
 
 ### Reports
 
-[List all players by alph](https://github.com/Prud-homme/image-data-bank/blob/main/projet_4/reports-statisticsu/playeralphabetic.png?raw=true)
+[List all players by alph](https://github.com/Prud-homme/image-data-bank/blob/main/projet_4/reports-statistics/playeralphabetic.png?raw=true)
 
 [List all tournaments](https://github.com/Prud-homme/image-data-bank/blob/main/projet_4/reports-statistics/listtournaments.png?raw=true)
 
