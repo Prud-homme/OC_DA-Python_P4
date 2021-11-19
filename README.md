@@ -16,7 +16,7 @@
 About this program :
 - it allows to manage chess tournaments according to the Swiss system
 - it allows to manage the rating of registered players 
-- it allows to display different reports
+- it allows to display different reports (list of players in the database or in a tournament, list of tournaments in the database,...)
 - it uses a json database to store tournaments and players
 
 ![Screenshot of menu](https://github.com/Prud-homme/image-data-bank/blob/main/projet_4/menu.gif?raw=true)
@@ -50,26 +50,29 @@ $ source myenv/bin/activate
 ```
 
 ## Program execution
+
 When the virtual environment is activated and you are placed in the folder where the main file is located, launch the program with the command:
 ```
-(windows-env) $ python main.py
+(myenv) $ python3 main.py
 ```
-```
-(unix-mac-env) $ python3 main.py
-```
+🗒️ Note: Depending on the installation of python it is possible that the `python3` command is not recognized under windows. In this case, you will have to replace `python3` by `python`.
 
 In order to get more information during the execution of the program you can run the command:
 ```
-(windows-env) $ python main.py --loglevel INFO
+(myenv) $ python3 main.py --loglevel info
 ```
-```
-(unix-mac-env) $ python3 main.py --loglevel INFO
-```
+This information is for example: the success of adding a player to a tournament, the registration of a tournament in the database or the confirmation that a tournament has the right number of players or rounds.
+
 ## Flake8
-The .flake8 file allows to configure flake8 and thus it will be enough to launch the `flake8` command to generate the report
+
+The .flake8 file allows to configure flake8 and thus it will be enough to launch the `flake8` command to generate the report.
+
 ## Screenshot
+
 ℹ️ Use Ctrl + Click for open in new tab
+
 ### Tournament menu
+
 [Create a tournament](https://github.com/Prud-homme/image-data-bank/blob/main/projet_4/tournament-menu/create.png?raw=true)
 
 [Load a tournament](https://github.com/Prud-homme/image-data-bank/blob/main/projet_4/tournament-menu/load.png?raw=true)
@@ -93,6 +96,7 @@ The .flake8 file allows to configure flake8 and thus it will be enough to launch
 [Complete a turn](https://github.com/Prud-homme/image-data-bank/blob/main/projet_4/tournament-menu/completeturn.png?raw=true)
 
 ### Reports
+
 [List all players by alph](https://github.com/Prud-homme/image-data-bank/blob/main/projet_4/tournament-menu/playeralphabetic.png?raw=true)
 
 [List all tournaments](https://github.com/Prud-homme/image-data-bank/blob/main/projet_4/tournament-menu/listtournaments.png?raw=true)
