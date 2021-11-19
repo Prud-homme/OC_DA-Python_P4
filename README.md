@@ -100,7 +100,7 @@ The .flake8 file allows to configure flake8 and thus it will be enough to launch
 
 [List all tournaments](https://raw.githubusercontent.com/Prud-homme/image-data-bank/main/projet_4/reports-statistics/listtournaments.png?raw=true)
 
-[Selecting a tournament to access these reports](https://raw.githubusercontent.com/Prud-homme/image-data-bank/main/projet_4/reports-statistics/abouttournament.png?raw=true)
+[Selecting a tournament to access these reports](https://github.com/Prud-homme/image-data-bank/blob/main/projet_4/reports-statistics/abouttounament.png?raw=true)
 
 [Report menu for a tournament selected](https://raw.githubusercontent.com/Prud-homme/image-data-bank/main/projet_4/reports-statistics/abouttournamentmenu.png?raw=true)
 
