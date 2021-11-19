@@ -64,12 +64,16 @@ In order to get more information during the execution of the program you can run
 ```
 This information is for example: the success of adding a player to a tournament, the registration of a tournament in the database or the confirmation that a tournament has the right number of players or rounds.
 
-`(myenv) $ python3 main.py --help` displays a brief documentation on how to invoke the program.
+
+To display a brief documentation on how to invoke the program you can run the command:
+```
+(myenv) $ python3 main.py --help
+```
 
 ## Flake8
 
 The .flake8 file allows to configure flake8 and thus it will be enough to launch the `flake8` command to generate the report.
-The report is generated in the *flake-report* folder under the name *index.html*. To open the report open the index.html file with a web browser.
+The report is generated in the *flake-report* folder under the name *index.html*. To open the report open the *index.html* file with a web browser.
 
 ## Screenshot
 
