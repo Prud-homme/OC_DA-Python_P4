@@ -1,20 +1,16 @@
 from __future__ import annotations
 
-import os
-import sys
 from typing import Optional
 
-from __init__ import SerializedPartialTournament, SerializedTournament
-from logger import logger
-from models.match import Match
-from models.player import Player
-from models.turn import Turn
-from settings import ICONS, TOURNAMENTS_TABLE
-from utils import autopause, clear_display
+# from chess.chess_typeddict import SerializedPartialTournament, SerializedTournament
+from ..logger import logger
 
-modelsdir = os.path.dirname(os.path.realpath(__file__))
-chessdir = os.path.dirname(modelsdir)
-sys.path.append(chessdir)
+# from .match import Match
+# from .player import Player
+from ..settings import ICONS, TOURNAMENTS_TABLE
+from ..utils import autopause, clear_display
+
+# from .turn import Turn
 
 
 class Tournament:
@@ -45,8 +41,7 @@ It {' and '.join([f'{key} on {value}' for key, value in self.date.items()])}.
 It takes place in {self.turns_number} turns with {self.players_number} players.
 whose time control is {self.time_control}.
 
-Description of the tournament: {self.description}
-"""
+Description of the tournament: {self.description}"""
 
     def __repr__(self) -> None:
         return f"""Tournament(name='{self.name}', location='{self.location}',
@@ -58,7 +53,9 @@ players_number={self.players_number})""".replace(
 
     def add_turn(self, turn: Turn) -> None:
         """Check if the provided parameter is a turn instance and, if true, add the turn to tournament"""
-        if type(turn) != Turn:
+        from .turn import Turn
+
+        if not isinstance(turn, Turn):
             logger.error(
                 "Operation cancelled: the provided parameter is not a turn instance"
             )
@@ -70,7 +67,9 @@ players_number={self.players_number})""".replace(
 
     def add_player(self, new_player: Player) -> None:
         """Check if the provided parameter is a player instance and, if true, add the player to tournament"""
-        if type(new_player) != Player:
+        from .player import Player
+
+        if not isinstance(new_player, Player):
             logger.error(
                 "Operation cancelled: the provided parameter is not a player instance"
             )
@@ -89,6 +88,9 @@ players_number={self.players_number})""".replace(
 
     def serializing(self) -> SerializedTournament:
         """Serialization of the tournament instance in order to export it to json format"""
+        from .player import Player
+        from .turn import Turn
+
         return {
             "name": self.name,
             "location": self.location,
@@ -103,6 +105,9 @@ players_number={self.players_number})""".replace(
 
     def unserializing(self, serial_tournament: SerializedTournament) -> None:
         """Transform the serialized data of a tournament into a tournament instance"""
+        from .player import Player
+        from .turn import Turn
+
         self.name = serial_tournament["name"]
         self.location = serial_tournament["location"]
         self.date = serial_tournament["date"]
@@ -253,6 +258,9 @@ players_number={self.players_number})""".replace(
         Return a string containing a printable message
         contening all information of the tournament
         """
+        from .player import Player
+        from .turn import Turn
+
         clear_display()
         message = ""
         msg = self.display()
@@ -267,14 +275,14 @@ players_number={self.players_number})""".replace(
             logger.warning("Can not obtain turns information")
             autopause()
         else:
-            message += msg
+            message = "\n".join((message, msg))
 
         msg = Player().display_players(self.players, sort_field="ranking")
         if msg is None:
             logger.warning("Can not obtain players information")
             autopause()
         else:
-            message += msg
+            message = "\n".join((message, msg))
 
         return message
 
@@ -305,6 +313,8 @@ players_number={self.players_number})""".replace(
         Return a string containing a printable message
         containing the information given by the a Match method of each match
         """
+        from .match import Match
+
         if len(self.turns) == 0:
             return "\x1b[32m♟️ No match is defined ♟️\x1b[0m"
         message = "\x1b[32m♟️ List of matches ♟️\x1b[0m"

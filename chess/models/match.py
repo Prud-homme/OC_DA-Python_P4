@@ -1,17 +1,12 @@
 from __future__ import annotations
 
-import os
-import sys
 from typing import Optional, Union
 
-from __init__ import SerializedMatch, SerializedPlayer
-from logger import logger
-from models.player import Player
-from models.turn import Turn
+# from chess.chess_typeddict import SerializedMatch, SerializedPlayer
+from ..logger import logger
 
-modelsdir = os.path.dirname(os.path.realpath(__file__))
-chessdir = os.path.dirname(modelsdir)
-sys.path.append(chessdir)
+# from .player import Player
+# from .turn import Turn
 
 
 class Match:
@@ -57,34 +52,48 @@ class Match:
         The score can also be None if the match did not take place.
         Return a boolean according to the result of the checks.
         """
+        from .player import Player
+
         try:
             well_defined = True
             [player1, score1], [player2, score2] = self.match
 
-            if not type(player1) == Player:
+            if not isinstance(player1, Player):
                 logger.error(
                     "Match not well defined: the first player must be a player instance."
                 )
                 well_defined = False
 
-            if type(score1) not in (float, int) and score1 is not None:
+            if (
+                not isinstance(score1, float)
+                and not isinstance(score1, int)
+                and score1 is not None
+            ):
                 logger.error(
                     """Match not well defined:
-the first score must be a float or int or defined as None."""
-                ).replace("\n", " ")
+the first score must be a float or int or defined as None.""".replace(
+                        "\n", " "
+                    )
+                )
                 well_defined = False
 
-            if not type(player2) == Player:
+            if not isinstance(player2, Player):
                 logger.error(
                     "Match not well defined: the second player must be a player instance."
                 )
                 well_defined = False
 
-            if type(score2) not in (float, int) and score2 is not None:
+            if (
+                not isinstance(score2, float)
+                and not isinstance(score2, int)
+                and score2 is not None
+            ):
                 logger.error(
                     """Match not well defined:
-the second score must be a float or int or defined as None"""
-                ).replace("\n", " ")
+the second score must be a float or int or defined as None""".replace(
+                        "\n", " "
+                    )
+                )
                 well_defined = False
 
             return well_defined
@@ -174,6 +183,8 @@ the second score must be a float or int or defined as None"""
         From a list of unserialized matches, the function unserializes
         the matches and creates a new list containing the match instances.
         """
+        from .player import Player
+
         unserial_matches = []
 
         for serial_match in serial_matches:
@@ -188,8 +199,10 @@ the second score must be a float or int or defined as None"""
             if type(match) != Match and not match.is_well_defined():
                 logger.error(
                     """Match not well defined:
-impossible to unserialized a match and return the unserialized match list."""
-                ).replace("\n", " ")
+impossible to unserialized a match and return the unserialized match list.""".replace(
+                        "\n", " "
+                    )
+                )
                 return None
 
             unserial_matches.append(match)

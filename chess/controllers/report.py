@@ -1,29 +1,19 @@
 from __future__ import annotations
 
-import os
-import sys
 from typing import Optional
 
-from controllers.checks import (
-    choice_is_valid,
-    entry_is_integer_under_max_value,
-    get_valid_entry,
-)
-from logger import logger
-from models import Player, Tournament
-from settings import PLAYERS_TABLE, TOURNAMENTS_TABLE
-from utils import autopause, clear_display, pause
-from views import (
+from ..logger import logger
+from ..models import Player, Tournament
+from ..settings import PLAYERS_TABLE, TOURNAMENTS_TABLE
+from ..utils import autopause, clear_display, pause
+from ..views import (
     display_menu_report,
     display_menu_report_player_filter,
     display_menu_report_tournament,
     display_message,
     entry_request,
 )
-
-currentdir = os.path.dirname(os.path.realpath(__file__))
-chessdir = os.path.dirname(currentdir)
-sys.path.append(chessdir)
+from .checks import choice_is_valid, entry_is_integer_under_max_value, get_valid_entry
 
 
 def launch_report() -> None:

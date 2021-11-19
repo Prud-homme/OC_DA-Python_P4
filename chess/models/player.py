@@ -1,17 +1,11 @@
 from __future__ import annotations
 
-import os
-import sys
 from typing import Any, Optional
 
-from __init__ import SerializedPartialPlayer, SerializedPlayer
-from logger import logger
-from settings import PLAYERS_TABLE
-from utils import autopause, pause
-
-modelsdir = os.path.dirname(os.path.realpath(__file__))
-chessdir = os.path.dirname(modelsdir)
-sys.path.append(chessdir)
+# from chess.chess_typeddict import SerializedPartialPlayer, SerializedPlayer
+from ..logger import logger
+from ..settings import PLAYERS_TABLE
+from ..utils import autopause, pause
 
 
 class Player:

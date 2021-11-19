@@ -1,21 +1,15 @@
 from __future__ import annotations
 
 import operator
-import os
-import sys
 from datetime import datetime
 from typing import Optional
 
-from logger import logger
-from models.match import Match
-from models.player import Player
-from utils import pause
+# from chess.chess_typeddict import SerializedTurn
+from ..logger import logger
 
-from .__init__ import SerializedTurn
-
-modelsdir = os.path.dirname(os.path.realpath(__file__))
-chessdir = os.path.dirname(modelsdir)
-sys.path.append(chessdir)
+# from .match import Match
+# from .player import Player
+from ..utils import pause
 
 
 class Turn:
@@ -52,6 +46,8 @@ matches={self.matches})""".replace(
 
     def serializing(self) -> SerializedTurn:
         """Serialization of the turn instance in order to export it to json format"""
+        from .match import Match
+
         return {
             "name": self.name,
             "start_date": self.start_date,
@@ -106,6 +102,8 @@ matches={self.matches})""".replace(
         From a list of unserialized turns, the function unserializes
         the turns and creates a new list containing the turn instances.
         """
+        from .match import Match
+
         turns = []
         for serial_turn in serial_turns:
             turns.append(
@@ -176,6 +174,8 @@ matches={self.matches})""".replace(
         pair_players_matches: list[Match],
     ) -> Optional[tuple[list[Match], int]]:
         """Generates a list of matches according to the Swiss system"""
+        from .match import Match
+
         for i in top_index:
             for j in [player for player in bottom_index if player not in player_paired]:
                 pair_players = (top_players_list[i], bottom_players_list[j])

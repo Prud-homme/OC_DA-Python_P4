@@ -1,22 +1,10 @@
 from __future__ import annotations
 
-import os
-import sys
-
-from controllers.checks import (
-    choice_is_valid,
-    entry_belongs_list,
-    entry_is_integer_under_max_value,
-    entry_is_not_empty,
-    entry_is_valid_datetime,
-    get_valid_entry,
-)
-from controllers.player import get_player
-from logger import logger
-from models import Match, Tournament, Turn
-from settings import TIME_CONTROL, TOURNAMENTS_TABLE
-from utils import autopause, clear_display, pause
-from views import (
+from ..logger import logger
+from ..models import Match, Tournament, Turn
+from ..settings import TIME_CONTROL, TOURNAMENTS_TABLE
+from ..utils import autopause, clear_display, pause
+from ..views import (
     display_menu_tournament_complete,
     display_menu_tournament_lack_players,
     display_menu_tournament_main,
@@ -24,10 +12,15 @@ from views import (
     display_message,
     entry_request,
 )
-
-currentdir = os.path.dirname(os.path.realpath(__file__))
-chessdir = os.path.dirname(currentdir)
-sys.path.append(chessdir)
+from .checks import (
+    choice_is_valid,
+    entry_belongs_list,
+    entry_is_integer_under_max_value,
+    entry_is_not_empty,
+    entry_is_valid_datetime,
+    get_valid_entry,
+)
+from .player import get_player
 
 
 class TournamentController:
@@ -140,7 +133,7 @@ class TournamentController:
             default_value=4,
             title=title,
         )
-        return turns_number
+        return int(turns_number)
 
     @staticmethod
     def new_tournament_get_players_number(title: str) -> int:
@@ -152,7 +145,7 @@ class TournamentController:
             default_value=8,
             title=title,
         )
-        return players_number
+        return int(players_number)
 
     def tournament_get_players(self) -> None:
         """Request the user to add a player as many times as he wants or up to the maximum number of players"""
@@ -170,6 +163,7 @@ class TournamentController:
                     message="> Want to add another player ? (y, n): ",
                     check_functions=[entry_belongs_list],
                     allowed_list=["y", "n"],
+                    title="\x1b[32m♟️ Tournament - Add player ♟️\x1b[0m",
                 )
             else:
                 continue_add = "n"
@@ -243,10 +237,13 @@ class TournamentController:
         """Displays the latest matches generated according to the Swiss system"""
         clear_display()
         if self.turn is None:
-            print("No turn in memory")
-            return None
-        message = Match().display_matches_choice(self.turn)
-        display_message(message)
+            logger.info("No turn in memory")
+            autopause()
+        else:
+            message = Match().display_matches_choice(self.turn)
+            display_message(message)
+            if not number:
+                pause()
 
     def start_a_turn(self) -> None:
         """
@@ -260,7 +257,7 @@ class TournamentController:
             autopause()
             return None
         if len(self.tournament.turns) == self.tournament.turns_number:
-            logger.info("all turns defined")
+            logger.info("All turns are defined")
             autopause()
             return None
         name = f"Round {len(self.tournament.turns)+1}"
@@ -279,7 +276,6 @@ class TournamentController:
             )
 
         self.display_current_match()
-        pause()
 
     def complete_match(self) -> None:
         """
@@ -299,7 +295,7 @@ class TournamentController:
         self.display_current_match(number=True)
         match_selected = get_valid_entry(
             input_function=entry_request,
-            message="> Select a Match: ",
+            message="\x1b[32m> Select a Match: \x1b[0m",
             check_functions=[entry_is_integer_under_max_value],
             max_value=len(self.turn.matches),
             title=Match().display_matches_choice(self.turn),
@@ -393,10 +389,6 @@ class TournamentController:
                 display_message(message)
                 pause()
 
-            elif choice == "3":
-                self.display_current_match()
-                pause()
-
             elif choice_is_valid(choice, handler):
                 handler[choice]()
             autopause()
@@ -430,6 +422,7 @@ class TournamentController:
                 handler[choice]()
         if len(self.tournament.players) == self.tournament.players_number:
             logger.info("all player defined")
+            self.resume_tournament()
 
     def tournament_is_complete(self) -> None:
         """
@@ -470,16 +463,16 @@ class TournamentController:
             and len(self.tournament.turns) != self.tournament.turns_number
         ):
             self.valid_resume()
-            self.save_tournament()
-            len(self.tournament.turns) != self.tournament.turns_number
+            # self.save_tournament()
 
         elif not self.tournament.all_players_defined():
             logger.info("Need more players")
+            autopause()
             self.lack_player()
-            self.save_tournament()
+            # self.save_tournament()
         else:
             logger.info("Please create or load a tournament to access this menu")
-            pause()
+            autopause()
 
     def save_tournament(self, title: str = None) -> None:
         """Allows the user to register the tournament in the database"""

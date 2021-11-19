@@ -1,10 +1,13 @@
 from __future__ import annotations
 
-import os
-import sys
 from typing import Optional
 
-from controllers.checks import (
+from ..logger import logger
+from ..models import Player
+from ..settings import PLAYERS_TABLE
+from ..utils import autopause, clear_display
+from ..views import display_menu_add_player, display_message, entry_request
+from .checks import (
     choice_is_valid,
     entry_belongs_list,
     entry_is_integer_under_max_value,
@@ -12,15 +15,6 @@ from controllers.checks import (
     entry_is_valid_date,
     get_valid_entry,
 )
-from logger import logger
-from models import Player
-from settings import PLAYERS_TABLE
-from utils import autopause, clear_display
-from views import display_menu_add_player, display_message, entry_request
-
-controllersdir = os.path.dirname(os.path.realpath(__file__))
-chessdir = os.path.dirname(controllersdir)
-sys.path.append(chessdir)
 
 
 def search_player() -> Optional[Player]:
@@ -122,7 +116,7 @@ def create_player_ranking(title: str) -> str:
         check_functions=[entry_is_integer_under_max_value],
         title=title,
     )
-    return ranking
+    return int(ranking)
 
 
 def create_player() -> Optional[Player]:

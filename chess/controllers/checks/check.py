@@ -1,16 +1,11 @@
-import os
-import sys
+from __future__ import annotations
+
 from datetime import datetime
 from typing import Callable, Optional, Union
 
-from logger import logger
-from utils import clear_display, pause
-from views import display_message
-
-checkdir = os.path.dirname(os.path.realpath(__file__))
-controllersdir = os.path.dirname(checkdir)
-chessdir = os.path.dirname(controllersdir)
-sys.path.append(chessdir)
+from ...logger import logger
+from ...utils import clear_display, pause
+from ...views import display_message
 
 
 def choice_is_valid(choice: str, handler: dict) -> bool:

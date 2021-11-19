@@ -1,7 +1,7 @@
 import os
 import time
 
-from logger import loglevel
+from .logger import loglevel
 
 
 def clear_display():

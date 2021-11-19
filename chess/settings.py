@@ -1,6 +1,6 @@
 import os
 
-from database import Table
+from .database import Table
 
 chessdir = os.path.dirname(os.path.realpath(__file__))
 maindir = os.path.dirname(chessdir)
