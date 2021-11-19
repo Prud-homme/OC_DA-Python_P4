@@ -66,10 +66,7 @@ In order to get more information during the execution of the program you can run
 (unix-mac-env) $ python3 main.py --loglevel INFO
 ```
 ## Flake8
-```
-flake8 --exclude .git,__pycache__,env --max-line-length=119 --format=html --htmldir=flake-report
-
-```
+The .flake8 file allows to configure flake8 and thus it will be enough to launch the `flake8` command to generate the report
 ## Screenshot
 ℹ️ Use Ctrl + Click for open in new tab
 ### Tournament menu
