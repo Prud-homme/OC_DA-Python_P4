@@ -4,7 +4,6 @@
 
 * [Overview](#overview)
 * [Program setup](#program-setup)
-	- [Overview](#creation-of-a-virtual-environment)
 * [Program execution](#program-execution)
 * [Flake8](#flake8)
 * [Screenshot](#screenshot)
