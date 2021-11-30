@@ -2,15 +2,9 @@ from __future__ import annotations
 
 from typing import Optional
 
-# from chess.chess_typeddict import SerializedPartialTournament, SerializedTournament
 from ..logger import logger
-
-# from .match import Match
-# from .player import Player
 from ..settings import ICONS, TOURNAMENTS_TABLE
 from ..utils import autopause, clear_display
-
-# from .turn import Turn
 
 
 class Tournament:

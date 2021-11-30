@@ -272,13 +272,12 @@ class TournamentController:
                 rankings=self.tournament.load_rankings(),
             )
         else:
-            breakpoint()
             self.turn.matches = self.turn.generate_pairs_swiss_system(
                 self.tournament.players,
                 scores=self.tournament.load_scores(),
                 turns_list=self.tournament.turns,
             )
-        #breakpoint()
+
         self.display_current_match()
 
     def complete_match(self) -> None:

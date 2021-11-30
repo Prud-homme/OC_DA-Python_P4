@@ -1,15 +1,11 @@
 from __future__ import annotations
 
 import operator
-from itertools import permutations
 from datetime import datetime
+from itertools import permutations
 from typing import Optional
 
-# from chess.chess_typeddict import SerializedTurn
 from ..logger import logger
-
-# from .match import Match
-# from .player import Player
 from ..utils import pause
 
 
@@ -134,19 +130,21 @@ matches={self.matches})""".replace(
             sort_index = []
             score_list = sorted(set(scores), reverse=True)
             for score in score_list:
-                ind_current_score = [ind for ind in range(len(scores)) if scores[ind] == score]
-                
-                missing_nb = int(len(scores)/2 - len(sort_index))
+                ind_current_score = [
+                    ind for ind in range(len(scores)) if scores[ind] == score
+                ]
+
+                missing_nb = int(len(scores) / 2 - len(sort_index))
                 if len(ind_current_score) <= missing_nb:
                     sort_index.extend(ind_current_score)
-                elif len(sort_index) < len(scores)/2 and len(sort_ind_list) == 0:
+                elif len(sort_index) < len(scores) / 2 and len(sort_ind_list) == 0:
                     comb_list = [permut for permut in permutations(ind_current_score)]
                     sort_ind_list = [sort_index + list(elt) for elt in comb_list]
                 elif len(sort_ind_list) > 0:
                     sort_ind_list = [elt + ind_current_score for elt in sort_ind_list]
                 else:
                     sort_index.extend(ind_current_score)
-                
+
         elif (
             rankings is not None
             and len(players) == len(rankings)
@@ -196,9 +194,9 @@ matches={self.matches})""".replace(
     ) -> Optional[tuple[list[Match], int]]:
         """Generates a list of matches according to the Swiss system"""
         from .match import Match
+
         pair_players_matches = []
         player_paired = []
-        print('>>> ', top_index, ' - ', bottom_index, ' - ', player_paired)
 
         for i in top_index:
             for j in [player for player in bottom_index if player not in player_paired]:
@@ -208,7 +206,6 @@ matches={self.matches})""".replace(
                     Turn().pair_not_in_previous_matches(turns_list, pair_players)
                     or len(players) == 2
                 ):
-                    print(top_players_list[i].firstname, ' - ', bottom_players_list[j].firstname)
                     pair_players_matches.append(
                         Match(
                             match=(
@@ -241,49 +238,6 @@ matches={self.matches})""".replace(
         to test new possibilities by making sure to respect the Swiss system
         as much as possible
         """
-        # breakpoint()
-        # if (
-        #     len(pair_players_matches) != nb_matches
-        #     and j == bottom_index[-1]
-        #     and position_bottom < nb_matches - 1
-        # ):
-        #     position_bottom += 1
-        #     pair_players_matches, player_paired = [], []
-        #     bottom_index = list(range(nb_matches))
-        #     bottom_index.insert(0, bottom_index.pop(position_bottom))
-        #     print('<<>> ', top_index, ' - ', bottom_index)
-        #     breakpoint()
-
-        # elif (
-        #     len(pair_players_matches) != nb_matches
-        #     and position_bottom == nb_matches - 1
-        # ):
-        #     position_top += 1
-        #     position_bottom = 0
-        #     pair_players_matches, player_paired = [], []
-        #     top_index, bottom_index = list(range(nb_matches)), list(range(nb_matches))
-        #     top_index.insert(0, top_index.pop(position_top))
-        #     print('<<>> ', top_index, ' - ', bottom_index)
-        #     breakpoint()
-
-        # print(
-        #     position_top,
-        #     position_bottom,
-        #     player_paired,
-        #     top_index,
-        #     bottom_index,
-        # )
-        # return (
-        #     position_top,
-        #     position_bottom,
-        #     pair_players_matches,
-        #     player_paired,
-        #     top_index,
-        #     bottom_index,
-        # )
-        #breakpoint()
-        #############
-        #breakpoint()
         if position_bottom < nb_matches - 1:
             position_bottom += 1
             pair_players_matches, player_paired = [], []
@@ -296,9 +250,8 @@ matches={self.matches})""".replace(
             pair_players_matches, player_paired = [], []
             top_index, bottom_index = list(range(nb_matches)), list(range(nb_matches))
             top_index.insert(0, top_index.pop(position_top))
-        
+
         elif position_top == nb_matches - 1:
-            print('toutes testées')
             return None
         return (
             position_top,
@@ -323,9 +276,8 @@ matches={self.matches})""".replace(
 
         turns_list = kwargs.get("turns_list", [])
         sort_players_list = Turn().sort_players_swiss_system(players, **kwargs)
-        
+
         for sort_players in sort_players_list:
-            breakpoint()
             nb_matches = int(len(players) / 2)
             top_players_list = sort_players[:nb_matches]
             bottom_players_list = sort_players[nb_matches:]
@@ -334,7 +286,6 @@ matches={self.matches})""".replace(
             position_top, position_bottom = 0, 0
 
             while len(pair_players_matches) != nb_matches and position_top < nb_matches:
-                print('---- ', position_top, position_bottom)
                 sort_valid = True
                 result = Turn().pairing_swiss_system(
                     players,
@@ -347,17 +298,11 @@ matches={self.matches})""".replace(
                     pair_players_matches,
                 )
                 if result is None:
-                    #breakpoint()
-                    #return None
                     sort_valid = False
                     break
 
                 pair_players_matches, j = result
-                #breakpoint()
-                #failed
                 if len(pair_players_matches) == nb_matches:
-                    print('>>>>>>>>>>>>>>>>> succes')
-                    input()
                     return pair_players_matches
 
                 result = Turn().pairing_failed_swiss_system(
@@ -380,13 +325,8 @@ matches={self.matches})""".replace(
                     pair_players_matches,
                     player_paired,
                     top_index,
-                    bottom_index
+                    bottom_index,
                 ) = result
-                #breakpoint()
-            #if sort_valid:
-            #    print('>>> ', top_index, ' - ', bottom_index)
-            #    input()
-            #    return pair_players_matches
         return None
 
     @staticmethod
