@@ -89,9 +89,11 @@ def select_tournament() -> Optional[Tournament]:
             f"\x1b[35mNumber of tournament found: {len(results)}\x1b[0m\n0: Cancel load"
         )
         i = 1
+        tournament = Tournament()
         for result in results:
-            message += f"""\n{i}: {result["name"]}, {result["location"]},
-    {" and ".join([f"{key} on {value}" for key, value in result["date"].items()])}"""
+            tournament.unserializing(result)
+            message += f"""\n{i}: {tournament.name}, {tournament.location},
+    {" and ".join([f"{key} on {value}" for key, value in tournament.date.items()])}"""
             i += 1
         message += "\n\x1b[32m> Select a tournament: \x1b[0m"
         tournament_selected = get_valid_entry(
@@ -102,7 +104,7 @@ def select_tournament() -> Optional[Tournament]:
             title="\x1b[32m♟️ Load a Tournament ♟️\x1b[0m",
         )
         if tournament_selected == "0":
-            logger.info("cancel ok")
+            logger.info("Canceled load.")
             autopause()
             return None
         tournament = Tournament()

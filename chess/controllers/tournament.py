@@ -206,9 +206,11 @@ class TournamentController:
 
             message = f"\x1b[35mNumber of tournament found: {len(results)}\x1b[0m\n0: Cancel load"
             i = 1
+            tournament = Tournament()
             for result in results:
-                message += f"""\n{i}: {result["name"]}, {result["location"]},
-    {" and ".join([f"{key} on {value}" for key, value in result["date"].items()])}"""
+                tournament.unserializing(result)
+                message += f"""\n{i}: {tournament.name}, {tournament.location},
+    {" and ".join([f"{key} on {value}" for key, value in tournament.date.items()])}"""
                 i += 1
             message += "\n\x1b[32m> Select a tournament: \x1b[0m"
             tournament_selected = get_valid_entry(
@@ -220,11 +222,12 @@ class TournamentController:
             )
 
             if tournament_selected == "0":
-                logger.info("cancel ok")
+                logger.info("Canceled")
                 autopause()
                 return None
 
             self.tournament.unserializing(results[int(tournament_selected) - 1])
+            self.turn = None
             autopause()
             self.resume_tournament()
 
@@ -269,12 +272,13 @@ class TournamentController:
                 rankings=self.tournament.load_rankings(),
             )
         else:
+            breakpoint()
             self.turn.matches = self.turn.generate_pairs_swiss_system(
                 self.tournament.players,
                 scores=self.tournament.load_scores(),
                 turns_list=self.tournament.turns,
             )
-
+        #breakpoint()
         self.display_current_match()
 
     def complete_match(self) -> None:
