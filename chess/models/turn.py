@@ -133,9 +133,8 @@ matches={self.matches})""".replace(
                 ind_current_score = [
                     ind for ind in range(len(scores)) if scores[ind] == score
                 ]
-
                 missing_nb = int(len(scores) / 2 - len(sort_index))
-                if len(ind_current_score) <= missing_nb:
+                if len(sort_index) + len(ind_current_score) <= missing_nb:
                     sort_index.extend(ind_current_score)
                 elif len(sort_index) < len(scores) / 2 and len(sort_ind_list) == 0:
                     comb_list = [permut for permut in permutations(ind_current_score)]
@@ -197,7 +196,7 @@ matches={self.matches})""".replace(
 
         pair_players_matches = []
         player_paired = []
-
+        
         for i in top_index:
             for j in [player for player in bottom_index if player not in player_paired]:
                 pair_players = (top_players_list[i], bottom_players_list[j])
@@ -284,7 +283,7 @@ matches={self.matches})""".replace(
             pair_players_matches, player_paired = [], []
             top_index, bottom_index = list(range(nb_matches)), list(range(nb_matches))
             position_top, position_bottom = 0, 0
-
+            
             while len(pair_players_matches) != nb_matches and position_top < nb_matches:
                 sort_valid = True
                 result = Turn().pairing_swiss_system(
